@@ -1,0 +1,810 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Menambahkan CSP meta tag untuk mengizinkan sumber yang diperlukan -->
+    <meta http-equiv="Content-Security-Policy" content="
+        default-src 'self'; 
+        script-src 'self' 'unsafe-inline' https://www.gstatic.com; 
+        style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://fonts.googleapis.com; 
+        font-src 'self' https://fonts.gstatic.com; 
+        img-src 'self' data: https:;
+        connect-src 'self' https://semulight-db.firebaseio.com https://semulight-db.firebaseapp.com;
+    ">
+    <title>About Us - Education Platform</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,300;0,400;1,600&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        #box2 {
+            max-width: 1280px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 0 20px;
+            box-sizing: border-box;
+            flex: 1;
+        }
+
+        nav {
+  width: 100%;
+  background: url('Web\ \(21\).svg');
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 15px 5%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1000;
+  transition: top 0.3s ease; /* Smooth transition for showing/hiding */
+}
+
+  .nav-logo {
+    display: flex;
+    align-items: center;
+  }
+
+  .logo {
+    width: 100px;
+    height: auto;
+    margin-right: 20px;
+  }
+
+  nav ul {
+    list-style: none;
+    display: flex;
+    gap: 1.5em;
+    align-items: center;
+  }
+
+  nav ul li {
+    position: relative;
+  }
+
+  nav ul li a {
+    color: black;
+    text-decoration: none;
+    font-weight: bold;
+    font-family: 'Poppins', sans-serif;
+    padding: 8px 12px;
+    display: block;
+    transition: all 0.3s ease;
+    font-size: 0.9em;
+  }
+
+nav ul li > a:hover {
+  background: linear-gradient(45deg, #8a2be2, #9400d3); /* Striking Purple Gradient */
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+#userRole {
+  background: rgba(0, 174, 140, 0.2);  /* Soft green background */
+  color: #9B4DCA;  /* Text color matching the background */
+  padding: 8px 16px;  /* Increased padding for better appearance */
+  border-radius: 20px;  /* Rounded corners for a softer look */
+  font-size: 1em;  /* Slightly larger text */
+  font-weight: bold;  /* Bold text for emphasis */
+  text-align: center;  /* Centered text */
+  display: inline-block;  /* Makes it behave like a block element */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);  /* Subtle shadow for depth */
+  transition: all 0.3s ease;  /* Smooth transition for hover effect */
+}
+
+/* hamburger button */
+    .hamburger {
+      display: none;
+      flex-direction: column;
+      cursor: pointer;
+    }
+
+    .hamburger div {
+      width: 25px;
+      height: 3px;
+      background: black;
+      margin: 4px;
+      transition: 0.3s;
+    }
+
+    /* responsive */
+    @media (max-width: 768px) {
+      .nav-links {
+        display: none;
+        position: absolute;
+        top: 60px;
+        right: 20px;
+        background: white;
+        flex-direction: column;
+        padding: 10px;
+        border: 1px solid #ddd;
+      }
+
+      .nav-links.active {
+        display: flex;
+      }
+
+      .hamburger {
+        display: flex;
+      }
+    }
+
+        /* About Us Content */
+        .about-section {
+            margin-top: 120px;
+            padding: 40px 0;
+        }
+
+        .about-header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .about-header h1 {
+            font-size: 3rem;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            position: relative;
+            display: inline-block;
+        }
+
+        .about-header h1::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 4px;
+            background: linear-gradient(to bottom, #00AE8C, #9B4DCA);
+            border-radius: 2px;
+        }
+
+        .about-header p {
+            font-size: 1.2rem;
+            color: #7f8c8d;
+            max-width: 800px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+
+        /* Mission Vision Section */
+        .mission-vision {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            margin-bottom: 60px;
+        }
+
+        .mission, .vision {
+            flex: 1;
+            min-width: 300px;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .mission:hover, .vision:hover {
+            transform: translateY(-5px);
+        }
+
+        .mission h2, .vision h2 {
+            color: #00AE8C;
+            margin-bottom: 20px;
+            font-size: 1.8rem;
+        }
+
+        .mission p, .vision p {
+            color: #7f8c8d;
+            line-height: 1.6;
+        }
+
+        /* Team Section */
+        .team-section {
+            margin-bottom: 60px;
+        }
+
+        .team-section h2 {
+            text-align: center;
+            font-size: 2.5rem;
+            color: #2c3e50;
+            margin-bottom: 40px;
+        }
+
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 30px;
+        }
+
+        .team-member {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .team-member:hover {
+            transform: translateY(-5px);
+        }
+
+        .member-img {
+            height: 250px;
+            overflow: hidden;
+        }
+
+        .member-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .team-member:hover .member-img img {
+            transform: scale(1.1);
+        }
+
+        .member-info {
+            padding: 20px;
+            text-align: center;
+        }
+
+        .member-info h3 {
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+
+        .member-info p {
+            color: #3498db;
+            margin-bottom: 15px;
+            font-weight: 500;
+        }
+
+        .member-info .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .member-info .social-links a {
+            color: #7f8c8d;
+            transition: color 0.3s ease;
+        }
+
+        .member-info .social-links a:hover {
+            color: #3498db;
+        }
+
+        /* Values Section */
+        .values-section {
+            margin-bottom: 60px;
+        }
+
+        .values-section h2 {
+            text-align: center;
+            font-size: 2.5rem;
+            color: #2c3e50;
+            margin-bottom: 40px;
+        }
+
+        .values-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .value-card {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        .value-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .value-icon {
+            font-size: 3rem;
+            color: #00AE8C;
+            margin-bottom: 20px;
+        }
+
+        .value-card h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+
+        .value-card p {
+            color: #7f8c8d;
+            line-height: 1.6;
+        }
+
+        /* Stats Section */
+        .stats-section {
+            background: linear-gradient(to bottom, #00AE8C, #9B4DCA);
+            color: white;
+            padding: 60px 0;
+            border-radius: 10px;
+            margin-bottom: 60px;
+        }
+
+        .stats-section h2 {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 40px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 30px;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 3rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .stat-label {
+            font-size: 1.2rem;
+        }
+
+        /* footer */
+.footer {
+  background-color: #00AE8C;
+  padding: 70px 0;
+  width: 100%;
+  text-align: left;
+}
+
+.footer-container {
+  max-width: 1200px; 
+  margin: 0 auto; 
+  padding: 0 15px;
+}
+
+.footer-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+.footer-col {
+  width: 25%;
+  padding: 0 15px;
+  margin-bottom: 35px;
+  text-align: left;
+}
+
+.footer-col h4 {
+  font-size: 18px;
+  color: #ffffff;
+  text-transform: capitalize;
+  margin-bottom: 35px;
+  font-weight: 500;
+  position: relative;
+  padding-left: 0;
+  text-align: left;
+}
+
+.footer-col h4::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: -10px;
+  background-color: #9B4DCA;
+  height: 2px;
+  width: 50px;
+}
+
+.footer-col ul li:not(:last-child) {
+  margin-bottom: 10px;
+}
+
+.footer-col ul li a {
+  font-size: 16px;
+  color: white;
+  text-decoration: none;
+  font-weight: 300;
+  display: block;
+  transition: all 0.3s ease;
+  text-align: left;
+}
+
+.footer-col ul li a:hover {
+  color: #ffffff;
+  padding-left: 8px;
+}
+
+.footer-col .social-links a {
+  display: inline-block;
+  height: 40px;
+  width: 40px;
+  background-color: rgba(255, 255, 255, 0.2);
+  margin: 0 10px 10px 0;
+  text-align: center;
+  line-height: 40px;
+  border-radius: 50%;
+  color: #ffffff;
+  transition: all 0.5s ease;
+}
+
+.footer-col .social-links a:hover {
+  color: #24262b;
+  background-color: #ffffff;
+}
+
+/* responsive */
+@media(max-width: 767px) {
+  .footer-col {
+    width: 50%;
+  }
+}
+
+@media(max-width: 574px) {
+  .footer-col {
+    width: 100%;
+  }
+}
+
+        /* Responsive */
+        @media (max-width: 992px) {
+            .mission-vision {
+                flex-direction: column;
+            }
+            
+            .footer-col {
+                width: 50%;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+                position: absolute;
+                top: 60px;
+                right: 20px;
+                background: white;
+                flex-direction: column;
+                padding: 10px;
+                border: 1px solid #ddd;
+                box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+                border-radius: 5px;
+                width: 200px;
+            }
+
+            .nav-links.active {
+                display: flex;
+            }
+
+            .hamburger {
+                display: flex;
+            }
+            
+            .about-section {
+                margin-top: 80px;
+                padding: 20px 0;
+            }
+            
+            .about-header h1 {
+                font-size: 2.5rem;
+            }
+            
+            .team-grid, .values-grid, .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 576px) {
+            #box2 {
+                padding: 0 10px;
+            }
+
+            .footer-col {
+                width: 100%;
+            }
+            
+            .about-section {
+                margin-top: 70px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="box2">
+        <div class="menu">
+            <nav>
+    <a href="menu.html" class="logo-link">
+        <img src="Web (44).svg" alt="Logo" class="logo" />
+    </a>
+
+    <ul class="nav-links">
+        <li><a href="Letsdonate.html">LET'S DONATE</a></li>
+        <li><a href="leaderboards.html">LEADERBOARDS</a></li>
+        <li><a href="chart.html">CHARTS</a></li>
+        <li><a href="forum.html">FORUM</a></li>
+        <li><a href="ContactUs.html">CONTACT US</a></li>
+        <li><a href="AboutUs.html">ABOUT US</a></li>
+        <li><a href="quiz chemistry.html">QUIZ</a></li>
+        <li><a href="user.html">USER</a></li>
+        <li><a href="signup.html" id="signUpBtn">SIGN UP</a></li>
+        <li><a href="login.html" id="logInBtn">LOG IN</a></li>
+        <!-- Mengubah href javascript:void(0) menjadi # untuk menghindari masalah CSP -->
+        <li><a href="#" id="logOutBtn" style="display: none;">LOG OUT</a></li>
+        <li id="userRole" style="display: none; font-family: 'Poppins', sans-serif;"></li>
+    </ul>
+
+    <div class="hamburger">
+      <div></div>
+      <div></div>
+      <div></div>
+    </div>
+  </nav>
+        </div>
+
+        <script type="module">
+    // Firebase configuration
+    const firebaseConfig = {
+        apiKey: "AIzaSyBdDwCslP5RGHi37xjFo89x8rY3kKbhUwQ",
+        authDomain: "semulight-db.firebaseapp.com",
+        projectId: "semulight-db",
+        storageBucket: "semulight-db.firebasestorage.app",
+        messagingSenderId: "693934626490",
+        appId: "1:693934626490:web:87c36c26026509f86f1483",
+        measurementId: "G-QFFLDWLW2L"
+    };
+
+    // Initialize Firebase
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js';
+    import { getAuth, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/9.22.1/firebase-auth.js';
+    import { getFirestore, doc, getDoc } from 'https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js';
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    // Check if user is logged in
+    onAuthStateChanged(auth, function(user) {
+        if (user) {
+            // User is signed in
+            document.getElementById('logInBtn').style.display = 'none';
+            document.getElementById('signUpBtn').style.display = 'none';
+            document.getElementById('logOutBtn').style.display = 'inline-block';
+            document.getElementById('userRole').style.display = 'inline-block';
+
+            // Get user role from Firestore
+            const userRef = doc(db, "users", user.uid);
+            getDoc(userRef).then((docSnapshot) => {
+                if (docSnapshot.exists()) {
+                    const role = docSnapshot.data().role;
+                    document.getElementById('userRole').textContent = role.charAt(0).toUpperCase() + role.slice(1);
+                }
+            }).catch((error) => {
+                console.error("Error getting user document:", error);
+            });
+        } else {
+            // User is signed out
+            document.getElementById('logInBtn').style.display = 'inline-block';
+            document.getElementById('signUpBtn').style.display = 'inline-block';
+            document.getElementById('logOutBtn').style.display = 'none';
+            document.getElementById('userRole').style.display = 'none';
+        }
+    });
+
+    // Log out functionality
+    document.getElementById('logOutBtn').addEventListener('click', function(event) {
+        event.preventDefault(); // Mencegah perilaku default link
+        signOut(auth).then(() => {
+            window.location.href = "menu.html"; // You can adjust this as needed for guest/public access
+        }).catch((error) => {
+            console.error("Error signing out:", error);
+        });
+    });
+  </script>
+
+        <script>
+  let prevScrollPos = window.pageYOffset; // Get the initial scroll position
+
+  window.onscroll = function() {
+    let currentScrollPos = window.pageYOffset; // Get the current scroll position
+    const nav = document.querySelector('nav'); // Select the nav element
+
+    if (prevScrollPos > currentScrollPos) {
+      // Scroll up - Show the navigation bar
+      nav.style.top = "0";
+    } else {
+      // Scroll down - Hide the navigation bar
+      nav.style.top = "-120px"; // You can adjust this value according to your navbar height
+    }
+    
+    prevScrollPos = currentScrollPos; // Update the previous scroll position
+  }; 
+  
+  </script>
+
+        <div class="about-section">
+            <div class="about-header">
+                <h1>About Semulight</h1>
+                <p>Semulight is dedicated to sustainability through the collection of used cooking oil, transforming waste into valuable resources, and fostering an eco-conscious community.</p>
+            </div>
+
+            <div class="mission-vision">
+                <div class="mission">
+                    <h2>Our Mission</h2>
+                    <p>To provide sustainable solutions by collecting used cooking oil, reducing waste, and transforming it into eco-friendly products that benefit both the environment and society.</p>
+                </div>
+                <div class="vision">
+                    <h2>Our Vision</h2>
+                    <p>To create a world where sustainability and resource efficiency drive the future, with Semulight at the forefront of promoting responsible disposal and recycling of used cooking oil globally.</p>
+                </div>
+            </div>
+
+            <div class="values-section">
+                <h2>Our Values</h2>
+                <div class="values-grid">
+                    <div class="value-card">
+                        <div class="value-icon">
+                            <i class="fas fa-leaf"></i>
+                        </div>
+                        <h3>Sustainability</h3>
+                        <p>We are committed to making a positive impact on the environment through sustainable practices in waste management and recycling.</p>
+                    </div>
+                    <div class="value-card">
+                        <div class="value-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <h3>Community Engagement</h3>
+                        <p>We believe in empowering communities to participate in sustainable practices, creating a collective effort to protect the planet.</p>
+                    </div>
+                    <div class="value-card">
+                        <div class="value-icon">
+                            <i class="fas fa-cogs"></i>
+                        </div>
+                        <h3>Innovation</h3>
+                        <p>We continuously explore new methods and technologies to enhance our sustainability efforts, turning waste into a resource for future generations.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="stats-section">
+                <h2>Our Impact</h2>
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <div class="stat-number">5,000+</div>
+                        <div class="stat-label">Liters of Used Oil Collected</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">200+</div>
+                        <div class="stat-label">Participants</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">100+</div>
+                        <div class="stat-label">Events</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="team-section">
+    <h2>Meet Our Team</h2>
+    <div class="team-grid">
+        <div class="team-member">
+            <div class="member-img">
+                <img src="Hui Wen.jpg" alt="Team Member">
+            </div>
+            <div class="member-info">
+                <h3>Hui Wen</h3>
+                <div class="social-links">
+                </div>
+            </div>
+        </div>
+        <div class="team-member">
+            <div class="member-img">
+                <img src="Zheng Xiang.jpg" alt="Team Member">
+            </div>
+            <div class="member-info">
+                <h3>Zheng Xiang</h3>
+                <div class="social-links">
+                </div>
+            </div>
+        </div>
+        <div class="team-member">
+            <div class="member-img">
+                <img src="Ikmal.jpg" alt="Team Member">
+            </div>
+            <div class="member-info">
+                <h3>Ikmal</h3>
+                <div class="social-links">
+                </div>
+            </div>
+        </div>
+        <div class="team-member">
+            <div class="member-img">
+                <img src="Yi Wen.jpg" alt="Team Member">
+            </div>
+            <div class="member-info">
+                <h3>Yi Wen</h3>
+                <div class="social-links">
+                </div>
+            </div>
+        </div>
+        <div class="team-member">
+            <div class="member-img">
+                <img src="Nuha Mardhiyyah.jpg" alt="Team Member">
+            </div>
+            <div class="member-info">
+                <h3>Nuha Mardhiyyah</h3>
+                <div class="social-links">
+                </div>
+            </div>
+        </div>
+        <div class="team-member">
+            <div class="member-img">
+                <img src="Amirah Atiqah.jpg" alt="Team Member">
+            </div>
+            <div class="member-info">
+                <h3>Amirah Atiqah</h3>
+                <div class="social-links">
+                </div>
+            </div>
+        </div>
+        <div class="team-member">
+            <div class="member-img">
+                <img src="Syafiq.jpg" alt="Team Member">
+            </div>
+            <div class="member-info">
+                <h3>Syafiq Hakimie</h3>
+                <div class="social-links">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+    </div>
+
+    <script>
+        // Navigation menu toggle
+        const hamburger = document.querySelector(".hamburger");
+        const navLinks = document.querySelector(".nav-links");
+
+        hamburger.addEventListener("click", () => {
+            navLinks.classList.toggle("active");
+        });
+
+        document.addEventListener('click', (e) => {
+            const isHamburger = hamburger.contains(e.target);
+            const isNavLinks = navLinks.contains(e.target);
+            
+            if (!isHamburger && !isNavLinks && navLinks.classList.contains('active')) {
+                navLinks.classList.remove('active');
+            }
+        });
+    </script>
+</body>
+</html>

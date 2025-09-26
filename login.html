@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- CSP Header untuk mengizinkan sumber yang diperlukan -->
+  <meta http-equiv="Content-Security-Policy" content="
+    default-src 'self';
+    script-src 'self' https://www.gstatic.com 'unsafe-inline';
+    style-src 'self' 'unsafe-inline';
+    connect-src 'self' https://semulight-db.firebaseio.com https://semulight-db.firebaseapp.com;
+    img-src 'self' data: https:;
+  ">
+  <title>Log In | Semulight</title>
+
+  <!-- Import Firebase SDK (Modular) -->
+  <script type="module">
+    // Firebase config
+    const firebaseConfig = {
+      apiKey: "AIzaSyBdDwCslP5RGHi37xjFo89x8rY3kKbhUwQ",
+      authDomain: "semulight-db.firebaseapp.com",
+      projectId: "semulight-db",
+      storageBucket: "semulight-db.firebasestorage.app",
+      messagingSenderId: "693934626490",
+      appId: "1:693934626490:web:87c36c26026509f86f1483",
+      measurementId: "G-QFFLDWLW2L"
+    };
+
+    // Import Firebase services
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js';
+    import { getAuth, signInWithEmailAndPassword, sendPasswordResetEmail } from 'https://www.gstatic.com/firebasejs/9.22.1/firebase-auth.js';
+    import { getFirestore, doc, getDoc } from 'https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js';
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    // Fungsi untuk redirect berdasarkan role
+    function redirectBasedOnRole(role) {
+      if (role === "admin" || role === "collector") {
+        window.location.href = "menu.html";
+      } else {
+        window.location.href = "menu.html";
+      }
+    }
+
+    // Login Form Handler
+    document.getElementById("login-form").addEventListener("submit", function (e) {
+      e.preventDefault();
+
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+      const submitBtn = document.getElementById("submit-btn");
+      const errorMessage = document.getElementById("error-message");
+
+      // Show loading state
+      submitBtn.textContent = "Logging in...";
+      submitBtn.disabled = true;
+      errorMessage.textContent = "";
+
+      // Firebase sign-in method
+      signInWithEmailAndPassword(auth, email, password)
+        .then((userCredential) => {
+          const user = userCredential.user;
+
+          // Get the user role from Firestore
+          const userRef = doc(db, "users", user.uid);
+          getDoc(userRef).then((docSnapshot) => {
+            if (docSnapshot.exists()) {
+              const userData = docSnapshot.data();
+              const role = userData.role;
+              const name = userData.name || user.email;
+
+              // Show success message
+              showNotification(`Welcome back, ${name}!`, "success");
+
+              // Role-based Redirection after a brief delay - menggunakan fungsi bukan string
+              setTimeout(() => {
+                redirectBasedOnRole(role);
+              }, 1500);
+            } else {
+              console.log("No such document!");
+              errorMessage.textContent = "Error: User data not found.";
+              submitBtn.textContent = "Log In";
+              submitBtn.disabled = false;
+            }
+          }).catch((error) => {
+            console.error("Error getting document: ", error);
+            errorMessage.textContent = "Error getting user data.";
+            submitBtn.textContent = "Log In";
+            submitBtn.disabled = false;
+          });
+        })
+        .catch((error) => {
+          const errorCode = error.code;
+          let errorMessageText = "An error occurred during login.";
+
+          // More specific error messages
+          if (errorCode === "auth/invalid-email") {
+            errorMessageText = "Invalid email address format.";
+          } else if (errorCode === "auth/user-disabled") {
+            errorMessageText = "This account has been disabled.";
+          } else if (errorCode === "auth/user-not-found") {
+            errorMessageText = "No account found with this email.";
+          } else if (errorCode === "auth/wrong-password") {
+            errorMessageText = "Incorrect password.";
+          } else if (errorCode === "auth/too-many-requests") {
+            errorMessageText = "Too many failed attempts. Please try again later.";
+          }
+
+          document.getElementById("error-message").textContent = errorMessageText;
+          submitBtn.textContent = "Log In";
+          submitBtn.disabled = false;
+        });
+    });
+
+    // Forgot password functionality
+    document.getElementById("forgot-password").addEventListener("click", function(e) {
+      e.preventDefault();
+      const email = document.getElementById("email").value;
+      
+      if (!email) {
+        document.getElementById("error-message").textContent = "Please enter your email address first.";
+        return;
+      }
+
+      sendPasswordResetEmail(auth, email)
+        .then(() => {
+          showNotification("Password reset email sent! Check your inbox.", "success");
+        })
+        .catch((error) => {
+          const errorCode = error.code;
+          let errorMessage = "Error sending reset email.";
+          
+          if (errorCode === "auth/user-not-found") {
+            errorMessage = "No account found with this email.";
+          }
+          
+          document.getElementById("error-message").textContent = errorMessage;
+        });
+    });
+
+    // Show notification function
+    function showNotification(message, type) {
+      const notification = document.createElement("div");
+      notification.textContent = message;
+      notification.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        padding: 15px 20px;
+        border-radius: 5px;
+        color: white;
+        font-weight: bold;
+        z-index: 1000;
+        transition: all 0.3s ease;
+        background-color: ${type === "success" ? "#2ecc71" : "#e74c3c"};
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+      `;
+      
+      document.body.appendChild(notification);
+      
+      // Gunakan fungsi anonymous bukan string
+      setTimeout(() => {
+        notification.style.transform = "translateX(100%)";
+        setTimeout(() => {
+          if (document.body.contains(notification)) {
+            document.body.removeChild(notification);
+          }
+        }, 300);
+      }, 3000);
+    }
+  </script>
+
+  <style>
+    body { 
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+      background: linear-gradient(to bottom, #00AE8C, #9B4DCA);
+      padding: 20px; 
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      color: #00AE8C;
+    }
+    
+    h1 { 
+      text-align: center; 
+      color: white;
+      margin-bottom: 30px;
+      font-size: 2.2rem;
+      font-weight: 600;
+    }
+    
+    .form-container { 
+      max-width: 450px; 
+      margin: 0 auto; 
+      background: #fff; 
+      padding: 40px 30px; 
+      border-radius: 12px; 
+      box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+      flex: 1;
+    }
+    
+    .form-group {
+      margin-bottom: 25px;
+    }
+    
+    label { 
+      display: block; 
+      margin-bottom: 8px; 
+      font-weight: 600;
+      color: #34495e;
+      font-size: 1rem;
+    }
+    
+    input { 
+      width: 100%; 
+      padding: 14px; 
+      margin: 8px 0; 
+      border-radius: 8px; 
+      border: 1px solid #ddd;
+      box-sizing: border-box;
+      font-size: 16px;
+      transition: all 0.3s ease;
+    }
+    
+    input:focus {
+      border-color: #3498db;
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+    }
+    
+    button { 
+      padding: 15px; 
+      background: #00AE8C; 
+      border: none; 
+      color: white; 
+      border-radius: 8px; 
+      cursor: pointer; 
+      width: 100%; 
+      font-size: 16px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      margin-top: 10px;
+    }
+    
+    button:hover {
+      background: #2980b9;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+    
+    button:disabled {
+      background: #95a5a6;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+    
+    p { 
+      text-align: center; 
+      margin-top: 20px;
+      font-size: 0.95rem;
+    }
+    
+    #error-message {
+      color: #e74c3c;
+      font-weight: 600;
+      margin-top: 15px;
+      text-align: center;
+      padding: 10px;
+      border-radius: 6px;
+      background-color: rgba(231, 76, 60, 0.1);
+    }
+    
+    .signup-link, .forgot-password {
+      color: #00AE8C;
+      text-decoration: none;
+      font-weight: 600;
+      transition: color 0.3s;
+    }
+    
+    .signup-link:hover, .forgot-password:hover {
+      color: #2980b9;
+      text-decoration: underline;
+    }
+    
+    footer {
+      text-align: center;
+      margin-top: 30px;
+      color: #7f8c8d;
+      font-size: 0.9rem;
+    }
+    
+    .logo {
+      text-align: center;
+      margin-bottom: 10px;
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: white;
+      letter-spacing: 1px;
+    }
+    
+    .divider {
+      display: flex;
+      align-items: center;
+      margin: 25px 0;
+    }
+    
+    .divider::before, .divider::after {
+      content: "";
+      flex: 1;
+      height: 1px;
+      background: #ddd;
+    }
+    
+    .divider span {
+      padding: 0 15px;
+      color: #7f8c8d;
+      font-size: 0.9rem;
+    }
+    
+    .demo-accounts {
+      background-color: #f8f9fa;
+      border-radius: 8px;
+      padding: 15px;
+      margin-top: 20px;
+      font-size: 0.85rem;
+    }
+    
+    .demo-accounts h3 {
+      margin-top: 0;
+      color: #2c3e50;
+      font-size: 1rem;
+    }
+    
+    .demo-account {
+      margin-bottom: 8px;
+    }
+    
+    .demo-account span {
+      font-weight: 600;
+      color: #3498db;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="logo">Semulight</div>
+  <h1>Log In to Your Account</h1>
+
+  <div class="form-container">
+    <form id="login-form">
+      <div class="form-group">
+        <label for="email">Email Address</label>
+        <input type="email" id="email" required placeholder="Enter your email">
+      </div>
+      
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input type="password" id="password" required placeholder="Enter your password">
+        <p style="text-align: right; margin-top: 5px;">
+          <a href="#" id="forgot-password" class="forgot-password">Forgot Password?</a>
+        </p>
+      </div>
+      
+      <button type="submit" id="submit-btn">Log In</button>
+    </form>
+
+    <p id="error-message"></p>
+    
+    <div class="divider"><span>or</span></div>
+    
+    <p>Don't have an account? <a href="signup.html" class="signup-link">Sign Up</a></p>
+    
+    <!-- Demo accounts for testing -->
+    <!-- <div class="demo-accounts">
+      <h3>Demo Accounts (for testing):</h3>
+      <div class="demo-account"><span>Admin:</span> admin@demo.com / Password123</div>
+      <div class="demo-account"><span>Collector:</span> collector@demo.com / Password123</div>
+      <div class="demo-account"><span>Customer:</span> customer@demo.com / Password123</div>
+    </div> -->
+  </div>
+
+  <footer>
+    &copy; 2023 Semulight. All rights reserved.
+  </footer>
+</body>
+</html>

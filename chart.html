@@ -1,0 +1,2953 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Tambahkan CSP header untuk mengizinkan sumber yang diperlukan -->
+  <meta http-equiv="Content-Security-Policy" content="
+    default-src 'self'; 
+    script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://www.gstatic.com; 
+    style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://fonts.googleapis.com; 
+    font-src 'self' https://cdnjs.cloudflare.com https://fonts.gstatic.com; 
+    img-src 'self' data: https:;
+    connect-src 'self' https://firestore.googleapis.com https://identitytoolkit.googleapis.com;
+  ">
+  <title>Advanced Analytics Dashboard - Semulight</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/date-fns@2.29.3/index.min.js"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,300;0,400;1,600&display=swap');
+    * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  body {
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    background-color: white;
+    text-align: center;
+    width: 100%;
+    margin: 0 auto;
+    background-image: url(Web\ \(43\).svg);
+  }
+
+nav {
+  width: 100%;
+  background: url('Web\ \(21\).svg');
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 15px 5%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1000;
+  transition: top 0.3s ease;
+}
+
+  .nav-logo {
+    display: flex;
+    align-items: center;
+  }
+
+  .logo {
+    width: 100px;
+    height: auto;
+    margin-right: 20px;
+  }
+
+  nav ul {
+    list-style: none;
+    display: flex;
+    gap: 1.5em;
+    align-items: center;
+  }
+
+  nav ul li {
+    position: relative;
+  }
+
+  nav ul li a {
+    color: black;
+    text-decoration: none;
+    font-weight: bold;
+    font-family: 'Poppins', sans-serif;
+    padding: 8px 12px;
+    display: block;
+    transition: all 0.3s ease;
+    font-size: 0.9em;
+  }
+
+nav ul li > a:hover {
+  background: linear-gradient(45deg, #8a2be2, #9400d3);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* hamburger button */
+    .hamburger {
+      display: none;
+      flex-direction: column;
+      cursor: pointer;
+    }
+
+    .hamburger div {
+      width: 25px;
+      height: 3px;
+      background: black;
+      margin: 4px;
+      transition: 0.3s;
+    }
+
+    /* responsive */
+    @media (max-width: 768px) {
+      .nav-links {
+        display: none;
+        position: absolute;
+        top: 60px;
+        right: 20px;
+        background: white;
+        flex-direction: column;
+        padding: 10px;
+        border: 1px solid #ddd;
+      }
+
+      .nav-links.active {
+        display: flex;
+      }
+
+      .hamburger {
+        display: flex;
+      }
+    }
+
+    #userRole {
+  background: rgba(0, 174, 140, 0.2);
+  color: #9B4DCA;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 1em;
+  font-weight: bold;
+  text-align: center;
+  display: inline-block;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+    .dashboard-container {
+      width: 95%;
+      max-width: 1400px;
+      margin: 20px auto;
+      background: white;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      padding-top: 120px;
+    }
+
+    .dashboard-header {
+      text-align: left;
+      margin-bottom: 30px;
+      border-bottom: 2px solid #00AE8C;
+      padding-bottom: 15px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .dashboard-header h1 {
+      color: #00AE8C;
+      font-size: 2.5em;
+      margin-bottom: 10px;
+    }
+
+    .dashboard-header p {
+      color: #666;
+      font-size: 1.1em;
+    }
+
+    .last-updated {
+      font-size: 0.9em;
+      color: #888;
+      font-style: italic;
+    }
+
+    .access-denied {
+      text-align: center;
+      padding: 50px;
+      background: #f8f9fa;
+      border-radius: 8px;
+      margin: 20px 0;
+    }
+
+    .access-denied h2 {
+      color: #e74c3c;
+      margin-bottom: 15px;
+    }
+
+    .access-denied p {
+      color: #666;
+      margin-bottom: 20px;
+    }
+
+    .summary-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+      margin: 20px 0;
+    }
+
+    .summary-card {
+      background: #f8f9fa;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      text-align: center;
+      transition: transform 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .summary-card:hover {
+      transform: translateY(-5px);
+    }
+
+    .summary-card h3 {
+      margin: 0;
+      color: #00AE8C;
+      font-size: 1.1em;
+    }
+
+    .summary-card p {
+      font-size: 2em;
+      margin: 10px 0 0;
+      font-weight: bold;
+      color: #333;
+    }
+
+    .summary-card .subtext {
+      font-size: 0.9em;
+      color: #666;
+      margin-top: 5px;
+    }
+
+    .trend-indicator {
+      display: inline-flex;
+      align-items: center;
+      font-size: 0.8em;
+      margin-left: 5px;
+    }
+
+    .trend-up {
+      color: #2ecc71;
+    }
+
+    .trend-down {
+      color: #e74c3c;
+    }
+
+    .trend-neutral {
+      color: #95a5a6;
+    }
+
+    .chart-controls {
+      margin: 30px 0;
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .chart-controls button {
+      margin: 0 5px;
+      padding: 10px 20px;
+      background-color: #00AE8C;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .chart-controls button.active {
+      background-color: #006600;
+      transform: scale(1.05);
+    }
+
+    .chart-controls button:hover:not(.active) {
+      background-color: #008800;
+    }
+
+    .chart-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+      gap: 20px;
+      margin: 20px 0;
+    }
+
+    .chart-container {
+      background: #f8f9fa;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      position: relative;
+    }
+
+    .chart-container h3 {
+      color: #00AE8C;
+      margin-bottom: 15px;
+      text-align: center;
+    }
+
+    .chart-legend {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-top: 15px;
+      gap: 10px;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      margin-right: 15px;
+    }
+
+    .legend-color {
+      width: 15px;
+      height: 15px;
+      border-radius: 3px;
+      margin-right: 5px;
+    }
+
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .data-table th, .data-table td {
+      border: 1px solid #ddd;
+      padding: 12px;
+      text-align: left;
+    }
+
+    .data-table th {
+      background-color: #00AE8C;
+      color: white;
+      position: sticky;
+      top: 0;
+    }
+
+    .data-table tr:nth-child(even) {
+      background-color: #f2f2f2;
+    }
+
+    .data-table tr:hover {
+      background-color: #e9f7f3;
+    }
+
+    .btn {
+      padding: 14px 30px;
+      background-color: #00AE8C;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 1.2em;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      margin: 10px 5px;
+    }
+
+    .btn:hover {
+      background-color: #009900;
+      transform: translateY(-2px);
+    }
+
+    .filter-section {
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      margin: 20px 0;
+      gap: 15px;
+      background: #f8f9fa;
+      padding: 15px;
+      border-radius: 8px;
+    }
+
+    .filter-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .filter-group label {
+      font-weight: bold;
+      color: #333;
+    }
+
+    .filter-group select, .filter-group input {
+      padding: 8px 12px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      background-color: white;
+    }
+
+    .export-buttons {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      margin: 20px 0;
+    }
+
+    .insights-section {
+      background: #e8f5e9;
+      border-left: 4px solid #00AE8C;
+      padding: 15px;
+      margin: 20px 0;
+      border-radius: 4px;
+    }
+
+    .insights-section h3 {
+      color: #00AE8C;
+      margin-bottom: 10px;
+    }
+
+    .insight-item {
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+    }
+
+    .insight-icon {
+      margin-right: 10px;
+      color: #00AE8C;
+    }
+
+    .kpi-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+      margin: 20px 0;
+    }
+
+    .kpi-card {
+      background: white;
+      padding: 15px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      text-align: center;
+      border-top: 4px solid #00AE8C;
+    }
+
+    .kpi-card h4 {
+      color: #666;
+      font-size: 0.9em;
+      margin-bottom: 5px;
+    }
+
+    .kpi-card p {
+      font-size: 1.5em;
+      font-weight: bold;
+      color: #00AE8C;
+    }
+
+    .comparison-section {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 20px;
+      margin: 20px 0;
+    }
+
+    .comparison-card {
+      background: #f8f9fa;
+      padding: 15px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .comparison-card h4 {
+      color: #00AE8C;
+      margin-bottom: 10px;
+    }
+
+    .tab-container {
+      margin: 20px 0;
+    }
+
+    .tab-buttons {
+      display: flex;
+      border-bottom: 1px solid #ddd;
+      margin-bottom: 15px;
+    }
+
+    .tab-btn {
+      padding: 10px 20px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      border-bottom: 3px solid transparent;
+      transition: all 0.3s;
+    }
+
+    .tab-btn.active {
+      border-bottom: 3px solid #00AE8C;
+      color: #00AE8C;
+      font-weight: bold;
+    }
+
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    @media (max-width: 768px) {
+      .dashboard-container {
+        width: 95%;
+        margin-top: 80px;
+        padding: 15px;
+      }
+      
+      .chart-controls {
+        flex-direction: column;
+        align-items: center;
+      }
+      
+      .chart-controls button {
+        margin: 5px 0;
+        width: 80%;
+      }
+      
+      .chart-row {
+        grid-template-columns: 1fr;
+      }
+      
+      .filter-section {
+        flex-direction: column;
+      }
+      
+      .export-buttons {
+        justify-content: center;
+      }
+      
+      .dashboard-header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+    }
+  </style>
+</head>
+<body>
+  <nav>
+    <a href="menu.html" class="logo-link">
+      <img src="Web (44).svg" alt="Logo" class="logo" />
+    </a>
+
+    <ul class="nav-links">
+      <li><a href="Letsdonate.html">LET'S DONATE</a></li>
+      <li><a href="chart.html">ANALYTICS</a></li>
+      <li><a href="leaderboards.html">LEADERBOARDS</a></li>
+      <li><a href="forum.html">FORUM</a></li>
+      <li><a href="ContactUs.html">CONTACT US</a></li>
+      <li><a href="menu.html">ABOUT US</a></li>
+      <li><a href="quiz chemistry.html">QUIZ</a></li>
+      <li><a href="user.html">USER</a></li>
+      <li><a href="signup.html" id="signUpBtn">SIGN UP</a></li>
+      <li><a href="login.html" id="logInBtn">LOG IN</a></li>
+      <li><a href="#" id="logOutBtn" style="display: none;">LOG OUT</a></li>
+      <li id="userRole" style="display: none;"></li>
+    </ul>
+
+    <div class="hamburger">
+      <div></div>
+      <div></div>
+      <div></div>
+    </div>
+  </nav>
+
+  <div class="dashboard-container">
+    <div class="dashboard-header">
+      <div>
+        <h1>Advanced Analytics Dashboard</h1>
+        <p>Comprehensive insights into donation activities and trends with predictive analytics</p>
+      </div>
+      <div class="last-updated" id="last-updated">Last updated: Just now</div>
+    </div>
+
+    <!-- Access Control Section -->
+    <div id="access-denied" class="access-denied" style="display: none;">
+      <h2>Access Denied</h2>
+      <p>You need to be an admin or collector to view analytics.</p>
+      <a href="menu.html" class="btn">Go Back to Home</a>
+    </div>
+
+    <!-- Analytics Content (Visible only to Admin/Collector) -->
+    <div id="analytics-content" style="display: none;">
+      <!-- Filter Section -->
+      <div class="filter-section">
+        <div class="filter-group">
+          <label for="event-filter">Filter by Event:</label>
+          <select id="event-filter">
+            <option value="all">All Events</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label for="date-range">Date Range:</label>
+          <select id="date-range">
+            <option value="7days">Last 7 Days</option>
+            <option value="30days">Last 30 Days</option>
+            <option value="90days">Last 90 Days</option>
+            <option value="year">This Year</option>
+            <option value="all">All Time</option>
+            <option value="custom">Custom Range</option>
+          </select>
+        </div>
+        <div class="filter-group" id="custom-date-range" style="display: none;">
+          <label for="start-date">From:</label>
+          <input type="date" id="start-date">
+          <label for="end-date">To:</label>
+          <input type="date" id="end-date">
+        </div>
+        <div class="filter-group">
+          <label for="granularity">Granularity:</label>
+          <select id="granularity">
+            <option value="daily">Daily</option>
+            <option value="weekly">Weekly</option>
+            <option value="monthly">Monthly</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Summary Cards -->
+      <div class="summary-cards">
+        <div class="summary-card">
+          <h3>Total Donations</h3>
+          <p id="total-donations">0</p>
+          <div class="subtext" id="donations-change">
+            <span id="donations-change-value">+0%</span> from previous period
+            <span class="trend-indicator" id="donations-trend"></span>
+          </div>
+        </div>
+        <div class="summary-card">
+          <h3>Total Quantity</h3>
+          <p id="total-quantity">0 kg</p>
+          <div class="subtext" id="quantity-change">
+            <span id="quantity-change-value">+0%</span> from previous period
+            <span class="trend-indicator" id="quantity-trend"></span>
+          </div>
+        </div>
+        <div class="summary-card">
+          <h3>Total Value</h3>
+          <p id="total-value">RM 0</p>
+          <div class="subtext" id="value-change">
+            <span id="value-change-value">+0%</span> from previous period
+            <span class="trend-indicator" id="value-trend"></span>
+          </div>
+        </div>
+        <div class="summary-card">
+          <h3>Average per Donation</h3>
+          <p id="avg-donation">0 kg</p>
+          <div class="subtext" id="avg-change">
+            <span id="avg-change-value">+0%</span> from previous period
+            <span class="trend-indicator" id="avg-trend"></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- KPI Cards -->
+      <div class="kpi-cards">
+        <div class="kpi-card">
+          <h4>Active Donors</h4>
+          <p id="active-donors">0</p>
+        </div>
+        <div class="kpi-card">
+          <h4>Avg Donation Frequency</h4>
+          <p id="avg-frequency">0 days</p>
+        </div>
+        <div class="kpi-card">
+          <h4>Top Donor Contribution</h4>
+          <p id="top-donor-contribution">0%</p>
+        </div>
+        <div class="kpi-card">
+          <h4>Donation Completion Rate</h4>
+          <p id="completion-rate">0%</p>
+        </div>
+      </div>
+
+      <!-- Insights Section -->
+      <div class="insights-section" id="insights-section">
+        <h3><i class="fas fa-lightbulb"></i> Key Insights</h3>
+        <div id="insights-content">
+          <!-- Insights will be populated here -->
+        </div>
+      </div>
+
+      <!-- Tab Container -->
+      <div class="tab-container">
+        <div class="tab-buttons">
+          <button class="tab-btn active" data-tab="overview">Overview</button>
+          <button class="tab-btn" data-tab="trends">Trends & Forecast</button>
+          <button class="tab-btn" data-tab="donors">Donor Analysis</button>
+          <button class="tab-btn" data-tab="geographical">Geographical</button>
+          <button class="tab-btn" data-tab="comparison">Comparison</button>
+        </div>
+
+        <!-- Overview Tab -->
+        <div class="tab-content active" id="overview-tab">
+          <div class="chart-row">
+            <div class="chart-container">
+              <h3>Donations Over Time</h3>
+              <canvas id="trendsChart"></canvas>
+            </div>
+            <div class="chart-container">
+              <h3>Donations by Category</h3>
+              <canvas id="categoryChart"></canvas>
+            </div>
+          </div>
+
+          <div class="chart-row">
+            <div class="chart-container">
+              <h3>Top Donors</h3>
+              <canvas id="donorsChart"></canvas>
+            </div>
+            <div class="chart-container">
+              <h3>Geographical Distribution</h3>
+              <canvas id="geoChart"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <!-- Trends & Forecast Tab -->
+        <div class="tab-content" id="trends-tab">
+          <div class="chart-row">
+            <div class="chart-container">
+              <h3>Donation Trends with Forecast</h3>
+              <canvas id="forecastChart"></canvas>
+            </div>
+            <div class="chart-container">
+              <h3>Seasonality Analysis</h3>
+              <canvas id="seasonalityChart"></canvas>
+            </div>
+          </div>
+
+          <div class="chart-row">
+            <div class="chart-container">
+              <h3>Growth Rate Analysis</h3>
+              <canvas id="growthChart"></canvas>
+            </div>
+            <div class="chart-container">
+              <h3>Donation Frequency</h3>
+              <canvas id="frequencyChart"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <!-- Donor Analysis Tab -->
+        <div class="tab-content" id="donors-tab">
+          <div class="chart-row">
+            <div class="chart-container">
+              <h3>Donor Segmentation</h3>
+              <canvas id="segmentationChart"></canvas>
+            </div>
+            <div class="chart-container">
+              <h3>Donor Retention</h3>
+              <canvas id="retentionChart"></canvas>
+            </div>
+          </div>
+
+          <div class="chart-row">
+            <div class="chart-container">
+              <h3>Donor Lifetime Value</h3>
+              <canvas id="lifetimeValueChart"></canvas>
+            </div>
+            <div class="chart-container">
+              <h3>Recurring vs One-time Donors</h3>
+              <canvas id="recurringChart"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <!-- Geographical Tab -->
+        <div class="tab-content" id="geographical-tab">
+          <div class="chart-row">
+            <div class="chart-container">
+              <h3>Donations by State</h3>
+              <canvas id="stateChart"></canvas>
+            </div>
+            <div class="chart-container">
+              <h3>Regional Performance</h3>
+              <canvas id="regionalChart"></canvas>
+            </div>
+          </div>
+
+          <div class="comparison-section">
+            <div class="comparison-card">
+              <h4>Top Performing States</h4>
+              <div id="top-states-list">
+                <!-- Will be populated dynamically -->
+              </div>
+            </div>
+            <div class="comparison-card">
+              <h4>Areas with Growth Potential</h4>
+              <div id="growth-potential-list">
+                <!-- Will be populated dynamically -->
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Comparison Tab -->
+        <div class="tab-content" id="comparison-tab">
+          <div class="chart-row">
+            <div class="chart-container">
+              <h3>Period Comparison</h3>
+              <canvas id="comparisonChart"></canvas>
+            </div>
+            <div class="chart-container">
+              <h3>Event Performance Comparison</h3>
+              <canvas id="eventComparisonChart"></canvas>
+            </div>
+          </div>
+
+          <div class="chart-row">
+            <div class="chart-container">
+              <h3>Year-over-Year Growth</h3>
+              <canvas id="yoyChart"></canvas>
+            </div>
+            <div class="chart-container">
+              <h3>Benchmarking</h3>
+              <canvas id="benchmarkChart"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Export Buttons -->
+      <div class="export-buttons">
+        <button class="btn" id="export-csv"><i class="fas fa-file-csv"></i> Export as CSV</button>
+        <button class="btn" id="export-pdf"><i class="fas fa-file-pdf"></i> Export as PDF</button>
+        <button class="btn" id="export-report"><i class="fas fa-chart-bar"></i> Generate Report</button>
+      </div>
+
+      <!-- Detailed Data Table -->
+      <div class="chart-container">
+        <h3>Detailed Donation Data</h3>
+        <div style="overflow-x: auto;">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Donor Name</th>
+                <th>Phone</th>
+                <th>Event</th>
+                <th>Station</th>
+                <th>State</th>
+                <th>Quantity (kg)</th>
+                <th>Total (RM)</th>
+                <th>Points Earned</th>
+              </tr>
+            </thead>
+            <tbody id="data-table-body">
+              <!-- Data will be populated here -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    // Import Firebase modules
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js';
+    import { 
+      getAuth, 
+      onAuthStateChanged, 
+      signOut 
+    } from 'https://www.gstatic.com/firebasejs/9.22.1/firebase-auth.js';
+    import { 
+      getFirestore, 
+      doc, 
+      getDoc, 
+      collection, 
+      getDocs,
+      query,
+      where,
+      orderBy
+    } from 'https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js';
+
+    // Firebase Configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyBdDwCslP5RGHi37xjFo89x8rY3kKbhUwQ",
+      authDomain: "semulight-db.firebaseapp.com",
+      projectId: "semulight-db",
+      storageBucket: "semulight-db.firebasestorage.app",
+      messagingSenderId: "693934626490",
+      appId: "1:693934626490:web:87c36c26026509f86f1483",
+      measurementId: "G-QFFLDWLW2L"
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    // DOM elements
+    const signUpBtn = document.getElementById('signUpBtn');
+    const logInBtn = document.getElementById('logInBtn');
+    const logOutBtn = document.getElementById('logOutBtn');
+    const userRole = document.getElementById('userRole');
+    const accessDenied = document.getElementById('access-denied');
+    const analyticsContent = document.getElementById('analytics-content');
+    const hamburger = document.querySelector(".hamburger");
+    const navLinks = document.querySelector(".nav-links");
+    const lastUpdated = document.getElementById('last-updated');
+
+    // Current user data
+    let currentUser = null;
+    let currentUserRole = null;
+    let allDonations = [];
+    let allEvents = [];
+    let previousPeriodData = null;
+
+    // Chart instances
+    let categoryChart, donorsChart, trendsChart, geoChart, forecastChart;
+    let seasonalityChart, growthChart, frequencyChart, segmentationChart;
+    let retentionChart, lifetimeValueChart, recurringChart, stateChart;
+    let regionalChart, comparisonChart, eventComparisonChart, yoyChart, benchmarkChart;
+
+    // Navigation scroll behavior
+    let lastScrollTop = 0;
+    const nav = document.querySelector('nav');
+
+    window.addEventListener('scroll', function () {
+      let currentScroll = window.pageYOffset || document.documentElement.scrollTop;
+      if (currentScroll > lastScrollTop && currentScroll > 100) {
+        nav.style.top = '-100px';
+      } else {
+        nav.style.top = '0';
+      }
+      lastScrollTop = currentScroll <= 0 ? 0 : currentScroll;
+    });
+
+    // Hamburger menu functionality
+    hamburger.addEventListener("click", () => {
+      navLinks.classList.toggle("active");
+    });
+
+    // Check if user is logged in and get role
+    onAuthStateChanged(auth, async function (user) {
+      if (user) {
+        currentUser = user;
+
+        // User is signed in
+        signUpBtn.style.display = 'none';
+        logInBtn.style.display = 'none';
+        logOutBtn.style.display = 'inline-block';
+        userRole.style.display = 'inline-block';
+
+        // Get user role from Firestore
+        const userRef = doc(db, "users", user.uid);
+        try {
+          const docSnapshot = await getDoc(userRef);
+          if (docSnapshot.exists()) {
+            currentUserRole = docSnapshot.data().role;
+            userRole.textContent = currentUserRole.charAt(0).toUpperCase() + currentUserRole.slice(1);
+
+            // Show/hide content based on role
+            if (currentUserRole === 'admin' || currentUserRole === 'collector') {
+              accessDenied.style.display = 'none';
+              analyticsContent.style.display = 'block';
+              await loadAnalyticsData();
+            } else {
+              accessDenied.style.display = 'block';
+              analyticsContent.style.display = 'none';
+            }
+          }
+        } catch (error) {
+          console.error("Error getting user document:", error);
+        }
+      } else {
+        // User is signed out
+        currentUser = null;
+        currentUserRole = null;
+
+        signUpBtn.style.display = 'inline-block';
+        logInBtn.style.display = 'inline-block';
+        logOutBtn.style.display = 'none';
+        userRole.style.display = 'none';
+        accessDenied.style.display = 'block';
+        analyticsContent.style.display = 'none';
+      }
+    });
+
+    // Log out functionality - FIXED: removed javascript:void(0)
+    logOutBtn.addEventListener('click', function (event) {
+      event.preventDefault();
+      signOut(auth).then(() => {
+        window.location.href = "menu.html";
+      }).catch((error) => {
+        console.error("Error signing out:", error);
+      });
+    });
+
+    // Load analytics data based on user role
+    async function loadAnalyticsData() {
+      try {
+        console.log("Loading analytics data for:", currentUserRole);
+        
+        // Load events first
+        await loadEvents();
+        
+        // Load donations based on user role
+        if (currentUserRole === 'admin') {
+          // Admin can see all donations
+          const donationsQuery = query(collection(db, "donations"), orderBy("timestamp", "desc"));
+          console.log("Admin: Loading all donations");
+          const querySnapshot = await getDocs(donationsQuery);
+          allDonations = [];
+          
+          querySnapshot.forEach((doc) => {
+            const donationData = doc.data();
+            donationData.id = doc.id;
+            
+            // Find event name for this donation
+            const event = allEvents.find(e => e.id === donationData.eventId);
+            donationData.eventName = event ? event.name : 'Unknown Event';
+            
+            allDonations.push(donationData);
+          });
+        } else {
+          // Collector: Load donations for their events
+          const collectorEvents = allEvents.filter(event => event.createdBy === currentUser.uid);
+          const eventIds = collectorEvents.map(event => event.id);
+          
+          console.log("Collector events:", collectorEvents);
+          console.log("Collector event IDs:", eventIds);
+          
+          if (eventIds.length === 0) {
+            console.log("No events found for this collector");
+            allDonations = [];
+            updateAnalytics();
+            return;
+          }
+          
+          allDonations = [];
+          
+          // Query each event separately to avoid composite index requirement
+          for (const eventId of eventIds) {
+            try {
+              const eventDonationsQuery = query(
+                collection(db, "donations"),
+                where("eventId", "==", eventId)
+              );
+              
+              const querySnapshot = await getDocs(eventDonationsQuery);
+              
+              querySnapshot.forEach((doc) => {
+                const donationData = doc.data();
+                donationData.id = doc.id;
+                
+                // Find event name for this donation
+                const event = allEvents.find(e => e.id === donationData.eventId);
+                donationData.eventName = event ? event.name : 'Unknown Event';
+                
+                allDonations.push(donationData);
+              });
+            } catch (error) {
+              console.error(`Error loading donations for event ${eventId}:`, error);
+            }
+          }
+          
+          // Sort donations by timestamp client-side
+          allDonations.sort((a, b) => {
+            const timeA = a.timestamp?.toDate?.() || new Date(a.timestamp || 0);
+            const timeB = b.timestamp?.toDate?.() || new Date(b.timestamp || 0);
+            return timeB - timeA; // Descending order
+          });
+        }
+        
+        console.log(`Loaded ${allDonations.length} donations:`, allDonations);
+        updateLastUpdated();
+        updateAnalytics();
+        
+      } catch (error) {
+        console.error("Error loading analytics data:", error);
+        
+        // More specific error handling
+        if (error.code === 'failed-precondition') {
+          alert("Database index required. Please wait a few minutes for indexes to build, or contact your administrator.");
+        } else {
+          alert("Error loading analytics data: " + error.message);
+        }
+      }
+    }
+
+    // Update last updated timestamp
+    function updateLastUpdated() {
+      const now = new Date();
+      lastUpdated.textContent = `Last updated: ${now.toLocaleString()}`;
+    }
+
+    // Load events for filtering
+    async function loadEvents() {
+      try {
+        let eventsQuery;
+        
+        if (currentUserRole === 'admin') {
+          eventsQuery = query(collection(db, "events"));
+        } else {
+          eventsQuery = query(
+            collection(db, "events"),
+            where("createdBy", "==", currentUser.uid)
+          );
+        }
+        
+        const querySnapshot = await getDocs(eventsQuery);
+        allEvents = [];
+        const eventFilter = document.getElementById('event-filter');
+        
+        // Keep "All Events" option
+        eventFilter.innerHTML = '<option value="all">All Events</option>';
+        
+        querySnapshot.forEach((doc) => {
+          const eventData = doc.data();
+          eventData.id = doc.id;
+          allEvents.push(eventData);
+          
+          // Add to filter dropdown
+          const option = document.createElement('option');
+          option.value = doc.id;
+          option.textContent = eventData.name;
+          eventFilter.appendChild(option);
+        });
+        
+        console.log(`Loaded ${allEvents.length} events:`, allEvents);
+        
+      } catch (error) {
+        console.error("Error loading events:", error);
+        alert("Error loading events: " + error.message);
+      }
+    }
+
+    // Update analytics based on current filters
+    function updateAnalytics() {
+      // Apply filters
+      const eventFilter = document.getElementById('event-filter').value;
+      const dateRange = document.getElementById('date-range').value;
+      const granularity = document.getElementById('granularity').value;
+      
+      let filteredDonations = [...allDonations];
+      
+      // Filter by event
+      if (eventFilter !== 'all') {
+        filteredDonations = filteredDonations.filter(d => d.eventId === eventFilter);
+      }
+      
+      // Filter by date range
+      let now = new Date();
+      let startDate = new Date(0); // Beginning of time
+      let previousStartDate = new Date(0);
+      
+      if (dateRange === '7days') {
+        startDate = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+        previousStartDate = new Date(startDate.getTime() - 7 * 24 * 60 * 60 * 1000);
+      } else if (dateRange === '30days') {
+        startDate = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+        previousStartDate = new Date(startDate.getTime() - 30 * 24 * 60 * 60 * 1000);
+      } else if (dateRange === '90days') {
+        startDate = new Date(now.getTime() - 90 * 24 * 60 * 60 * 1000);
+        previousStartDate = new Date(startDate.getTime() - 90 * 24 * 60 * 60 * 1000);
+      } else if (dateRange === 'year') {
+        startDate = new Date(now.getFullYear(), 0, 1);
+        previousStartDate = new Date(now.getFullYear() - 1, 0, 1);
+      } else if (dateRange === 'custom') {
+        const customStart = document.getElementById('start-date').value;
+        const customEnd = document.getElementById('end-date').value;
+        
+        if (customStart) startDate = new Date(customStart);
+        if (customEnd) now = new Date(customEnd);
+        
+        // For custom range, we'll compare with the same length period before
+        const periodLength = now.getTime() - startDate.getTime();
+        previousStartDate = new Date(startDate.getTime() - periodLength);
+      }
+      
+      // Filter current period donations
+      const currentPeriodDonations = filteredDonations.filter(d => {
+        if (!d.timestamp) return false;
+        const donationDate = d.timestamp.toDate ? d.timestamp.toDate() : new Date(d.timestamp);
+        return donationDate >= startDate && donationDate <= now;
+      });
+      
+      // Filter previous period donations for comparison
+      const previousPeriodDonations = filteredDonations.filter(d => {
+        if (!d.timestamp) return false;
+        const donationDate = d.timestamp.toDate ? d.timestamp.toDate() : new Date(d.timestamp);
+        return donationDate >= previousStartDate && donationDate < startDate;
+      });
+      
+      console.log(`Current period: ${currentPeriodDonations.length} donations`);
+      console.log(`Previous period: ${previousPeriodDonations.length} donations`);
+      
+      // Update summary cards with comparison data
+      updateSummaryCards(currentPeriodDonations, previousPeriodDonations);
+      
+      // Update KPI cards
+      updateKPICards(currentPeriodDonations, filteredDonations);
+      
+      // Update insights
+      updateInsights(currentPeriodDonations, previousPeriodDonations);
+      
+      // Update charts based on active tab
+      updateCharts(currentPeriodDonations, previousPeriodDonations, granularity);
+      
+      // Update data table
+      updateDataTable(currentPeriodDonations);
+    }
+
+    // Update summary cards with analytics data and trends
+    function updateSummaryCards(currentDonations, previousDonations) {
+      const totalDonations = currentDonations.length;
+      const prevTotalDonations = previousDonations.length;
+      
+      let totalQuantity = 0;
+      let prevTotalQuantity = 0;
+      let totalValue = 0;
+      let prevTotalValue = 0;
+      
+      currentDonations.forEach(donation => {
+        totalQuantity += parseFloat(donation.quantity) || 0;
+        totalValue += parseTotalValue(donation.total) || 0;
+      });
+      
+      previousDonations.forEach(donation => {
+        prevTotalQuantity += parseFloat(donation.quantity) || 0;
+        prevTotalValue += parseTotalValue(donation.total) || 0;
+      });
+      
+      const avgDonation = totalDonations > 0 ? totalQuantity / totalDonations : 0;
+      const prevAvgDonation = prevTotalDonations > 0 ? prevTotalQuantity / prevTotalDonations : 0;
+      
+      // Calculate percentage changes
+      const donationsChange = prevTotalDonations > 0 ? 
+        ((totalDonations - prevTotalDonations) / prevTotalDonations * 100).toFixed(1) : 
+        totalDonations > 0 ? 100 : 0;
+        
+      const quantityChange = prevTotalQuantity > 0 ? 
+        ((totalQuantity - prevTotalQuantity) / prevTotalQuantity * 100).toFixed(1) : 
+        totalQuantity > 0 ? 100 : 0;
+        
+      const valueChange = prevTotalValue > 0 ? 
+        ((totalValue - prevTotalValue) / prevTotalValue * 100).toFixed(1) : 
+        totalValue > 0 ? 100 : 0;
+        
+      const avgChange = prevAvgDonation > 0 ? 
+        ((avgDonation - prevAvgDonation) / prevAvgDonation * 100).toFixed(1) : 
+        avgDonation > 0 ? 100 : 0;
+      
+      // Update DOM elements
+      document.getElementById('total-donations').textContent = totalDonations.toLocaleString();
+      document.getElementById('total-quantity').textContent = totalQuantity.toFixed(2) + ' kg';
+      document.getElementById('total-value').textContent = 'RM ' + totalValue.toFixed(2);
+      document.getElementById('avg-donation').textContent = avgDonation.toFixed(2) + ' kg';
+      
+      document.getElementById('donations-change-value').textContent = 
+        `${donationsChange >= 0 ? '+' : ''}${donationsChange}%`;
+      document.getElementById('quantity-change-value').textContent = 
+        `${quantityChange >= 0 ? '+' : ''}${quantityChange}%`;
+      document.getElementById('value-change-value').textContent = 
+        `${valueChange >= 0 ? '+' : ''}${valueChange}%`;
+      document.getElementById('avg-change-value').textContent = 
+        `${avgChange >= 0 ? '+' : ''}${avgChange}%`;
+      
+      // Update trend indicators
+      updateTrendIndicator('donations', donationsChange);
+      updateTrendIndicator('quantity', quantityChange);
+      updateTrendIndicator('value', valueChange);
+      updateTrendIndicator('avg', avgChange);
+    }
+
+    // Update trend indicator with appropriate icon
+    function updateTrendIndicator(metric, change) {
+      const indicator = document.getElementById(`${metric}-trend`);
+      if (change > 5) {
+        indicator.innerHTML = '<i class="fas fa-arrow-up trend-up"></i>';
+        indicator.className = 'trend-indicator trend-up';
+      } else if (change < -5) {
+        indicator.innerHTML = '<i class="fas fa-arrow-down trend-down"></i>';
+        indicator.className = 'trend-indicator trend-down';
+      } else {
+        indicator.innerHTML = '<i class="fas fa-minus trend-neutral"></i>';
+        indicator.className = 'trend-indicator trend-neutral';
+      }
+    }
+
+    // Update KPI cards with advanced metrics
+    function updateKPICards(currentDonations, allDonations) {
+      // Active donors (unique donors in current period)
+      const activeDonors = new Set();
+      currentDonations.forEach(donation => {
+        if (donation.name && donation.phone) {
+          activeDonors.add(`${donation.name}_${donation.phone}`);
+        }
+      });
+      document.getElementById('active-donors').textContent = activeDonors.size;
+      
+      // Average donation frequency (simplified calculation)
+      if (allDonations.length > 1) {
+        const donationsByDonor = {};
+        allDonations.forEach(donation => {
+          if (donation.name && donation.phone) {
+            const donorKey = `${donation.name}_${donation.phone}`;
+            if (!donationsByDonor[donorKey]) {
+              donationsByDonor[donorKey] = [];
+            }
+            const donationDate = donation.timestamp.toDate ? donation.timestamp.toDate() : new Date(donation.timestamp);
+            donationsByDonor[donorKey].push(donationDate);
+          }
+        });
+        
+        let totalDaysBetweenDonations = 0;
+        let donationPairs = 0;
+        
+        Object.values(donationsByDonor).forEach(dates => {
+          if (dates.length > 1) {
+            dates.sort((a, b) => a - b);
+            for (let i = 1; i < dates.length; i++) {
+              const daysBetween = (dates[i] - dates[i-1]) / (1000 * 60 * 60 * 24);
+              totalDaysBetweenDonations += daysBetween;
+              donationPairs++;
+            }
+          }
+        });
+        
+        const avgFrequency = donationPairs > 0 ? Math.round(totalDaysBetweenDonations / donationPairs) : 0;
+        document.getElementById('avg-frequency').textContent = `${avgFrequency} days`;
+      } else {
+        document.getElementById('avg-frequency').textContent = 'N/A';
+      }
+      
+      // Top donor contribution percentage
+      if (currentDonations.length > 0) {
+        const donorContributions = {};
+        let totalQuantity = 0;
+        
+        currentDonations.forEach(donation => {
+          const quantity = parseFloat(donation.quantity) || 0;
+          totalQuantity += quantity;
+          
+          if (donation.name && donation.phone) {
+            const donorKey = `${donation.name}_${donation.phone}`;
+            donorContributions[donorKey] = (donorContributions[donorKey] || 0) + quantity;
+          }
+        });
+        
+        if (totalQuantity > 0) {
+          const topDonorContribution = Math.max(...Object.values(donorContributions));
+          const topDonorPercentage = ((topDonorContribution / totalQuantity) * 100).toFixed(1);
+          document.getElementById('top-donor-contribution').textContent = `${topDonorPercentage}%`;
+        } else {
+          document.getElementById('top-donor-contribution').textContent = '0%';
+        }
+      } else {
+        document.getElementById('top-donor-contribution').textContent = '0%';
+      }
+      
+      // Donation completion rate (simplified - assuming all donations are completed)
+      document.getElementById('completion-rate').textContent = '100%';
+    }
+
+    // Update insights section with data-driven insights
+    function updateInsights(currentDonations, previousDonations) {
+      const insightsContent = document.getElementById('insights-content');
+      insightsContent.innerHTML = '';
+      
+      if (currentDonations.length === 0) {
+        insightsContent.innerHTML = '<p>No donation data available for the selected period.</p>';
+        return;
+      }
+      
+      // Calculate insights
+      const totalQuantity = currentDonations.reduce((sum, donation) => sum + (parseFloat(donation.quantity) || 0), 0);
+      const prevTotalQuantity = previousDonations.reduce((sum, donation) => sum + (parseFloat(donation.quantity) || 0), 0);
+      const growthRate = prevTotalQuantity > 0 ? ((totalQuantity - prevTotalQuantity) / prevTotalQuantity * 100).toFixed(1) : 100;
+      
+      // Insight 1: Growth trend
+      const growthInsight = document.createElement('div');
+      growthInsight.className = 'insight-item';
+      growthInsight.innerHTML = `
+        <div class="insight-icon"><i class="fas ${growthRate >= 0 ? 'fa-arrow-up' : 'fa-arrow-down'}"></i></div>
+        <div>Donations have ${growthRate >= 0 ? 'increased' : 'decreased'} by <strong>${Math.abs(growthRate)}%</strong> compared to the previous period.</div>
+      `;
+      insightsContent.appendChild(growthInsight);
+      
+      // Insight 2: Top performing event
+      const eventsPerformance = {};
+      currentDonations.forEach(donation => {
+        const eventName = donation.eventName || 'Unknown Event';
+        const quantity = parseFloat(donation.quantity) || 0;
+        eventsPerformance[eventName] = (eventsPerformance[eventName] || 0) + quantity;
+      });
+      
+      if (Object.keys(eventsPerformance).length > 0) {
+        const topEvent = Object.entries(eventsPerformance).reduce((a, b) => a[1] > b[1] ? a : b);
+        const eventInsight = document.createElement('div');
+        eventInsight.className = 'insight-item';
+        eventInsight.innerHTML = `
+          <div class="insight-icon"><i class="fas fa-star"></i></div>
+          <div><strong>${topEvent[0]}</strong> is your top performing event with ${topEvent[1].toFixed(2)} kg collected.</div>
+        `;
+        insightsContent.appendChild(eventInsight);
+      }
+      
+      // Insight 3: Donor engagement
+      const donorCount = new Set();
+      currentDonations.forEach(donation => {
+        if (donation.name && donation.phone) {
+          donorCount.add(`${donation.name}_${donation.phone}`);
+        }
+      });
+      
+      const avgDonationSize = totalQuantity / currentDonations.length;
+      const engagementInsight = document.createElement('div');
+      engagementInsight.className = 'insight-item';
+      engagementInsight.innerHTML = `
+        <div class="insight-icon"><i class="fas fa-users"></i></div>
+        <div>You have <strong>${donorCount.size} active donors</strong> with an average donation size of <strong>${avgDonationSize.toFixed(2)} kg</strong>.</div>
+      `;
+      insightsContent.appendChild(engagementInsight);
+      
+      // Insight 4: Timing pattern (simplified)
+      const hourCounts = Array(24).fill(0);
+      currentDonations.forEach(donation => {
+        if (donation.timestamp) {
+          const donationDate = donation.timestamp.toDate ? donation.timestamp.toDate() : new Date(donation.timestamp);
+          const hour = donationDate.getHours();
+          hourCounts[hour]++;
+        }
+      });
+      
+      const peakHour = hourCounts.indexOf(Math.max(...hourCounts));
+      const timingInsight = document.createElement('div');
+      timingInsight.className = 'insight-item';
+      timingInsight.innerHTML = `
+        <div class="insight-icon"><i class="fas fa-clock"></i></div>
+        <div>Peak donation time is around <strong>${peakHour}:00</strong> with most donations occurring during this hour.</div>
+      `;
+      insightsContent.appendChild(timingInsight);
+    }
+
+    // Parse total value from string or number
+    function parseTotalValue(value) {
+      if (typeof value === 'string') {
+        return parseFloat(value.replace('RM ', '').replace(',', '')) || 0;
+      }
+      return parseFloat(value) || 0;
+    }
+
+    // Update all charts based on active tab
+    function updateCharts(currentDonations, previousDonations, granularity) {
+      const activeTab = document.querySelector('.tab-btn.active').getAttribute('data-tab');
+      
+      switch(activeTab) {
+        case 'overview':
+          updateOverviewCharts(currentDonations, granularity);
+          break;
+        case 'trends':
+          updateTrendsCharts(currentDonations, previousDonations, granularity);
+          break;
+        case 'donors':
+          updateDonorCharts(currentDonations);
+          break;
+        case 'geographical':
+          updateGeographicalCharts(currentDonations);
+          break;
+        case 'comparison':
+          updateComparisonCharts(currentDonations, previousDonations);
+          break;
+      }
+    }
+
+    // Update overview tab charts
+    function updateOverviewCharts(donations, granularity) {
+      updateTrendsChart(donations, granularity);
+      updateCategoryChart(donations);
+      updateDonorsChart(donations);
+      updateGeoChart(donations);
+    }
+
+    // Update trends and forecast charts
+    function updateTrendsCharts(currentDonations, previousDonations, granularity) {
+      updateForecastChart(currentDonations, granularity);
+      updateSeasonalityChart(currentDonations);
+      updateGrowthChart(currentDonations, previousDonations);
+      updateFrequencyChart(currentDonations);
+    }
+
+    // Update donor analysis charts
+    function updateDonorCharts(donations) {
+      updateSegmentationChart(donations);
+      updateRetentionChart(donations);
+      updateLifetimeValueChart(donations);
+      updateRecurringChart(donations);
+    }
+
+    // Update geographical charts
+    function updateGeographicalCharts(donations) {
+      updateStateChart(donations);
+      updateRegionalChart(donations);
+      updateTopStatesList(donations);
+      updateGrowthPotentialList(donations);
+    }
+
+    // Update comparison charts
+    function updateComparisonCharts(currentDonations, previousDonations) {
+      updateComparisonChart(currentDonations, previousDonations);
+      updateEventComparisonChart(currentDonations);
+      updateYOYChart(currentDonations);
+      updateBenchmarkChart(currentDonations);
+    }
+
+    // Update trends chart (time series)
+    function updateTrendsChart(donations, granularity) {
+      const timeData = {};
+      
+      donations.forEach(donation => {
+        if (!donation.timestamp) return;
+        
+        const date = donation.timestamp.toDate ? donation.timestamp.toDate() : new Date(donation.timestamp);
+        let timeKey;
+        
+        if (granularity === 'daily') {
+          timeKey = `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}`;
+        } else if (granularity === 'weekly') {
+          // Get week number
+          const firstDayOfYear = new Date(date.getFullYear(), 0, 1);
+          const pastDaysOfYear = (date - firstDayOfYear) / 86400000;
+          const weekNumber = Math.ceil((pastDaysOfYear + firstDayOfYear.getDay() + 1) / 7);
+          timeKey = `${date.getFullYear()}-W${weekNumber.toString().padStart(2, '0')}`;
+        } else { // monthly
+          timeKey = `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}`;
+        }
+        
+        const quantity = parseFloat(donation.quantity) || 0;
+        
+        if (!timeData[timeKey]) {
+          timeData[timeKey] = 0;
+        }
+        
+        timeData[timeKey] += quantity;
+      });
+      
+      // Sort by date
+      const sortedTimes = Object.keys(timeData).sort();
+      let labels;
+      
+      if (granularity === 'daily') {
+        labels = sortedTimes.map(time => {
+          const [year, month, day] = time.split('-');
+          return new Date(year, month-1, day).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+        });
+      } else if (granularity === 'weekly') {
+        labels = sortedTimes.map(time => {
+          const [year, week] = time.split('-W');
+          return `Week ${week}, ${year}`;
+        });
+      } else {
+        labels = sortedTimes.map(time => {
+          const [year, month] = time.split('-');
+          return new Date(year, month-1).toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+        });
+      }
+      
+      const data = sortedTimes.map(time => timeData[time]);
+      
+      const ctx = document.getElementById('trendsChart').getContext('2d');
+      
+      if (trendsChart) {
+        trendsChart.destroy();
+      }
+      
+      trendsChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: labels,
+          datasets: [{
+            label: 'Donations (kg)',
+            data: data,
+            borderColor: '#00AE8C',
+            backgroundColor: 'rgba(0, 174, 140, 0.1)',
+            borderWidth: 2,
+            fill: true,
+            tension: 0.4
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            title: {
+              display: true,
+              text: 'Donation Trends Over Time'
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              title: {
+                display: true,
+                text: 'Quantity (kg)'
+              }
+            }
+          }
+        }
+      });
+    }
+
+    // Update category chart (by station)
+    function updateCategoryChart(donations) {
+      const stationData = {};
+      
+      donations.forEach(donation => {
+        const station = donation.station || 'Unknown';
+        const quantity = parseFloat(donation.quantity) || 0;
+        
+        if (!stationData[station]) {
+          stationData[station] = 0;
+        }
+        
+        stationData[station] += quantity;
+      });
+      
+      const labels = Object.keys(stationData);
+      const data = Object.values(stationData);
+      
+      const ctx = document.getElementById('categoryChart').getContext('2d');
+      
+      if (categoryChart) {
+        categoryChart.destroy();
+      }
+      
+      categoryChart = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+          labels: labels,
+          datasets: [{
+            data: data,
+            backgroundColor: [
+              '#00AE8C', '#009900', '#006600', '#003300', 
+              '#80CBC4', '#4DB6AC', '#26A69A', '#00897B'
+            ],
+            borderWidth: 1
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            title: {
+              display: true,
+              text: 'Donations by Station'
+            },
+            legend: {
+              position: 'bottom'
+            }
+          }
+        }
+      });
+    }
+
+    // Update top donors chart
+    function updateDonorsChart(donations) {
+      const donorData = {};
+      
+      donations.forEach(donation => {
+        const donor = donation.name || 'Unknown';
+        const quantity = parseFloat(donation.quantity) || 0;
+        
+        if (!donorData[donor]) {
+          donorData[donor] = 0;
+        }
+        
+        donorData[donor] += quantity;
+      });
+      
+      // Get top 10 donors
+      const sortedDonors = Object.entries(donorData)
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 10);
+      
+      const labels = sortedDonors.map(item => item[0]);
+      const data = sortedDonors.map(item => item[1]);
+      
+      const ctx = document.getElementById('donorsChart').getContext('2d');
+      
+      if (donorsChart) {
+        donorsChart.destroy();
+      }
+      
+      donorsChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: labels,
+          datasets: [{
+            label: 'Quantity (kg)',
+            data: data,
+            backgroundColor: '#00AE8C',
+            borderWidth: 1
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            title: {
+              display: true,
+              text: 'Top 10 Donors'
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              title: {
+                display: true,
+                text: 'Quantity (kg)'
+              }
+            }
+          }
+        }
+      });
+    }
+
+    // Update geographical distribution chart
+    function updateGeoChart(donations) {
+      const stateData = {};
+      
+      donations.forEach(donation => {
+        const state = donation.state || 'Unknown';
+        const quantity = parseFloat(donation.quantity) || 0;
+        
+        if (!stateData[state]) {
+          stateData[state] = 0;
+        }
+        
+        stateData[state] += quantity;
+      });
+      
+      const labels = Object.keys(stateData);
+      const data = Object.values(stateData);
+      
+      const ctx = document.getElementById('geoChart').getContext('2d');
+      
+      if (geoChart) {
+        geoChart.destroy();
+      }
+      
+      geoChart = new Chart(ctx, {
+        type: 'polarArea',
+        data: {
+          labels: labels,
+          datasets: [{
+            data: data,
+            backgroundColor: [
+              '#00AE8C', '#009900', '#006600', '#003300', 
+              '#80CBC4', '#4DB6AC', '#26A69A', '#00897B'
+            ],
+            borderWidth: 1
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            title: {
+              display: true,
+              text: 'Donations by State'
+            },
+            legend: {
+              position: 'bottom'
+            }
+          }
+        }
+      });
+    }
+
+    // Update forecast chart (simplified linear projection)
+    function updateForecastChart(donations, granularity) {
+      // This is a simplified forecast - in a real app, you'd use more sophisticated algorithms
+      const timeData = {};
+      
+      donations.forEach(donation => {
+        if (!donation.timestamp) return;
+        
+        const date = donation.timestamp.toDate ? donation.timestamp.toDate() : new Date(donation.timestamp);
+        let timeKey;
+        
+        if (granularity === 'daily') {
+          timeKey = `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}`;
+        } else if (granularity === 'weekly') {
+          // Get week number
+          const firstDayOfYear = new Date(date.getFullYear(), 0, 1);
+          const pastDaysOfYear = (date - firstDayOfYear) / 86400000;
+          const weekNumber = Math.ceil((pastDaysOfYear + firstDayOfYear.getDay() + 1) / 7);
+          timeKey = `${date.getFullYear()}-W${weekNumber.toString().padStart(2, '0')}`;
+        } else { // monthly
+          timeKey = `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}`;
+        }
+        
+        const quantity = parseFloat(donation.quantity) || 0;
+        
+        if (!timeData[timeKey]) {
+          timeData[timeKey] = 0;
+        }
+        
+        timeData[timeKey] += quantity;
+      });
+      
+      // Sort by date
+      const sortedTimes = Object.keys(timeData).sort();
+      let labels;
+      
+      if (granularity === 'daily') {
+        labels = sortedTimes.map(time => {
+          const [year, month, day] = time.split('-');
+          return new Date(year, month-1, day).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+        });
+      } else if (granularity === 'weekly') {
+        labels = sortedTimes.map(time => {
+          const [year, week] = time.split('-W');
+          return `Week ${week}, ${year}`;
+        });
+      } else {
+        labels = sortedTimes.map(time => {
+          const [year, month] = time.split('-');
+          return new Date(year, month-1).toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+        });
+      }
+      
+      const data = sortedTimes.map(time => timeData[time]);
+      
+      // Simple linear regression for forecast
+      const n = data.length;
+      let sumX = 0, sumY = 0, sumXY = 0, sumX2 = 0;
+      
+      for (let i = 0; i < n; i++) {
+        sumX += i;
+        sumY += data[i];
+        sumXY += i * data[i];
+        sumX2 += i * i;
+      }
+      
+      const slope = (n * sumXY - sumX * sumY) / (n * sumX2 - sumX * sumX);
+      const intercept = (sumY - slope * sumX) / n;
+      
+      // Forecast next 3 periods
+      const forecastData = [...data];
+      const forecastLabels = [...labels];
+      
+      for (let i = 0; i < 3; i++) {
+        const forecastValue = slope * (n + i) + intercept;
+        forecastData.push(Math.max(0, forecastValue));
+        
+        if (granularity === 'daily') {
+          const lastDate = new Date(sortedTimes[sortedTimes.length-1].replace(/-/g, '/'));
+          lastDate.setDate(lastDate.getDate() + (i+1));
+          forecastLabels.push(lastDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }));
+        } else if (granularity === 'weekly') {
+          forecastLabels.push(`Week ${n + i + 1} (Forecast)`);
+        } else {
+          const lastDate = new Date(sortedTimes[sortedTimes.length-1].replace(/-/g, '/'));
+          lastDate.setMonth(lastDate.getMonth() + (i+1));
+          forecastLabels.push(lastDate.toLocaleDateString('en-US', { month: 'short', year: 'numeric' }));
+        }
+      }
+      
+      const ctx = document.getElementById('forecastChart').getContext('2d');
+      
+      if (forecastChart) {
+        forecastChart.destroy();
+      }
+      
+      forecastChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: forecastLabels,
+          datasets: [
+            {
+              label: 'Actual Donations',
+              data: data.concat(Array(3).fill(null)),
+              borderColor: '#00AE8C',
+              backgroundColor: 'rgba(0, 174, 140, 0.1)',
+              borderWidth: 2,
+              fill: false
+            },
+            {
+              label: 'Forecast',
+              data: [...Array(n).fill(null), ...forecastData.slice(n)],
+              borderColor: '#FF9800',
+              borderDash: [5, 5],
+              borderWidth: 2,
+              fill: false
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            title: {
+              display: true,
+              text: 'Donation Trends with Forecast'
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              title: {
+                display: true,
+                text: 'Quantity (kg)'
+              }
+            }
+          }
+        }
+      });
+    }
+
+    // Update seasonality chart
+    function updateSeasonalityChart(donations) {
+      const monthlyData = Array(12).fill(0);
+      const year = new Date().getFullYear();
+      
+      donations.forEach(donation => {
+        if (!donation.timestamp) return;
+        
+        const date = donation.timestamp.toDate ? donation.timestamp.toDate() : new Date(donation.timestamp);
+        if (date.getFullYear() === year) {
+          const month = date.getMonth();
+          const quantity = parseFloat(donation.quantity) || 0;
+          monthlyData[month] += quantity;
+        }
+      });
+      
+      const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 
+                         'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+      
+      const ctx = document.getElementById('seasonalityChart').getContext('2d');
+      
+      if (seasonalityChart) {
+        seasonalityChart.destroy();
+      }
+      
+      seasonalityChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: monthNames,
+          datasets: [{
+            label: 'Donations (kg)',
+            data: monthlyData,
+            backgroundColor: '#00AE8C',
+            borderWidth: 1
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            title: {
+              display: true,
+              text: 'Seasonality Analysis (Current Year)'
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              title: {
+                display: true,
+                text: 'Quantity (kg)'
+              }
+            }
+          }
+        }
+      });
+    }
+
+    // Update growth chart
+    function updateGrowthChart(currentDonations, previousDonations) {
+      // Calculate monthly growth for the current year
+      const currentYear = new Date().getFullYear();
+      const currentMonthlyData = Array(12).fill(0);
+      const previousMonthlyData = Array(12).fill(0);
+      
+      currentDonations.forEach(donation => {
+        if (!donation.timestamp) return;
+        
+        const date = donation.timestamp.toDate ? donation.timestamp.toDate() : new Date(donation.timestamp);
+        if (date.getFullYear() === currentYear) {
+          const month = date.getMonth();
+          const quantity = parseFloat(donation.quantity) || 0;
+          currentMonthlyData[month] += quantity;
+        }
+      });
+      
+      previousDonations.forEach(donation => {
+        if (!donation.timestamp) return;
+        
+        const date = donation.timestamp.toDate ? donation.timestamp.toDate() : new Date(donation.timestamp);
+        if (date.getFullYear() === currentYear - 1) {
+          const month = date.getMonth();
+          const quantity = parseFloat(donation.quantity) || 0;
+          previousMonthlyData[month] += quantity;
+        }
+      });
+      
+      // Calculate growth rates
+      const growthRates = currentMonthlyData.map((current, index) => {
+        const previous = previousMonthlyData[index];
+        return previous > 0 ? ((current - previous) / previous * 100) : (current > 0 ? 100 : 0);
+      });
+      
+      const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 
+                         'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+      
+      const ctx = document.getElementById('growthChart').getContext('2d');
+      
+      if (growthChart) {
+        growthChart.destroy();
+      }
+      
+      growthChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: monthNames,
+          datasets: [{
+            label: 'Growth Rate (%)',
+            data: growthRates,
+            borderColor: '#00AE8C',
+            backgroundColor: 'rgba(0, 174, 140, 0.1)',
+            borderWidth: 2,
+            fill: true,
+            tension: 0.4
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            title: {
+              display: true,
+              text: 'Monthly Growth Rate Analysis'
+            }
+          },
+          scales: {
+            y: {
+              title: {
+                display: true,
+                text: 'Growth Rate (%)'
+              }
+            }
+          }
+        }
+      });
+    }
+
+    // Update frequency chart
+    function updateFrequencyChart(donations) {
+      // Calculate donation frequencies
+      const donationsByDonor = {};
+      
+      donations.forEach(donation => {
+        if (donation.name && donation.phone) {
+          const donorKey = `${donation.name}_${donation.phone}`;
+          if (!donationsByDonor[donorKey]) {
+            donationsByDonor[donorKey] = 0;
+          }
+          donationsByDonor[donorKey]++;
+        }
+      });
+      
+      // Count donors by frequency
+      const frequencyCounts = {
+        '1 time': 0,
+        '2-5 times': 0,
+        '6-10 times': 0,
+        '11+ times': 0
+      };
+      
+      Object.values(donationsByDonor).forEach(count => {
+        if (count === 1) {
+          frequencyCounts['1 time']++;
+        } else if (count >= 2 && count <= 5) {
+          frequencyCounts['2-5 times']++;
+        } else if (count >= 6 && count <= 10) {
+          frequencyCounts['6-10 times']++;
+        } else {
+          frequencyCounts['11+ times']++;
+        }
+      });
+      
+      const ctx = document.getElementById('frequencyChart').getContext('2d');
+      
+      if (frequencyChart) {
+        frequencyChart.destroy();
+      }
+      
+      frequencyChart = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+          labels: Object.keys(frequencyCounts),
+          datasets: [{
+            data: Object.values(frequencyCounts),
+            backgroundColor: ['#00AE8C', '#009900', '#006600', '#003300'],
+            borderWidth: 1
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            title: {
+              display: true,
+              text: 'Donation Frequency Distribution'
+            },
+            legend: {
+              position: 'bottom'
+            }
+          }
+        }
+      });
+    }
+
+    // Update segmentation chart
+    function updateSegmentationChart(donations) {
+      // Segment donors by donation size
+      const segmentCounts = {
+        'Small (<5 kg)': 0,
+        'Medium (5-20 kg)': 0,
+        'Large (>20 kg)': 0
+      };
+      
+      donations.forEach(donation => {
+        const quantity = parseFloat(donation.quantity) || 0;
+        if (quantity < 5) {
+          segmentCounts['Small (<5 kg)']++;
+        } else if (quantity <= 20) {
+          segmentCounts['Medium (5-20 kg)']++;
+        } else {
+          segmentCounts['Large (>20 kg)']++;
+        }
+      });
+      
+      const ctx = document.getElementById('segmentationChart').getContext('2d');
+      
+      if (segmentationChart) {
+        segmentationChart.destroy();
+      }
+      
+      segmentationChart = new Chart(ctx, {
+        type: 'pie',
+        data: {
+          labels: Object.keys(segmentCounts),
+          datasets: [{
+            data: Object.values(segmentCounts),
+            backgroundColor: ['#00AE8C', '#009900', '#006600'],
+            borderWidth: 1
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            title: {
+              display: true,
+              text: 'Donor Segmentation by Donation Size'
+            },
+            legend: {
+              position: 'bottom'
+            }
+          }
+        }
+      });
+    }
+
+    // Update retention chart (simplified)
+    function updateRetentionChart(donations) {
+      // This is a simplified retention analysis
+      const monthlyRetention = Array(12).fill(0);
+      const currentYear = new Date().getFullYear();
+      
+      // Count unique donors per month
+      const monthlyDonors = Array(12).fill(0).map(() => new Set());
+      
+      donations.forEach(donation => {
+        if (!donation.timestamp || !donation.name || !donation.phone) return;
+        
+        const date = donation.timestamp.toDate ? donation.timestamp.toDate() : new Date(donation.timestamp);
+        if (date.getFullYear() === currentYear) {
+          const month = date.getMonth();
+          const donorKey = `${donation.name}_${donation.phone}`;
+          monthlyDonors[month].add(donorKey);
+        }
+      });
+      
+      // Calculate retention rate (simplified)
+      for (let i = 1; i < 12; i++) {
+        if (monthlyDonors[i-1].size > 0) {
+          const returningDonors = new Set([...monthlyDonors[i]].filter(x => monthlyDonors[i-1].has(x)));
+          monthlyRetention[i] = (returningDonors.size / monthlyDonors[i-1].size) * 100;
+        }
+      }
+      
+      const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 
+                         'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+      
+      const ctx = document.getElementById('retentionChart').getContext('2d');
+      
+      if (retentionChart) {
+        retentionChart.destroy();
+      }
+      
+      retentionChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: monthNames,
+          datasets: [{
+            label: 'Retention Rate (%)',
+            data: monthlyRetention,
+            borderColor: '#00AE8C',
+            backgroundColor: 'rgba(0, 174, 140, 0.1)',
+            borderWidth: 2,
+            fill: true,
+            tension: 0.4
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            title: {
+              display: true,
+              text: 'Donor Retention Rate'
+            }
+          },
+          scales: {
+            y: {
+              min: 0,
+              max: 100,
+              title: {
+                display: true,
+                text: 'Retention Rate (%)'
+              }
+            }
+          }
+        }
+      });
+    }
+
+    // Update lifetime value chart (simplified)
+    function updateLifetimeValueChart(donations) {
+      // Calculate average lifetime value per donor
+      const donorValues = {};
+      
+      donations.forEach(donation => {
+        if (donation.name && donation.phone) {
+          const donorKey = `${donation.name}_${donation.phone}`;
+          const quantity = parseFloat(donation.quantity) || 0;
+          donorValues[donorKey] = (donorValues[donorKey] || 0) + quantity;
+        }
+      });
+      
+      // Group by value ranges
+      const valueRanges = {
+        'Low (<10 kg)': 0,
+        'Medium (10-50 kg)': 0,
+        'High (50-100 kg)': 0,
+        'VIP (>100 kg)': 0
+      };
+      
+      Object.values(donorValues).forEach(total => {
+        if (total < 10) {
+          valueRanges['Low (<10 kg)']++;
+        } else if (total <= 50) {
+          valueRanges['Medium (10-50 kg)']++;
+        } else if (total <= 100) {
+          valueRanges['High (50-100 kg)']++;
+        } else {
+          valueRanges['VIP (>100 kg)']++;
+        }
+      });
+      
+      const ctx = document.getElementById('lifetimeValueChart').getContext('2d');
+      
+      if (lifetimeValueChart) {
+        lifetimeValueChart.destroy();
+      }
+      
+      lifetimeValueChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: Object.keys(valueRanges),
+          datasets: [{
+            label: 'Number of Donors',
+            data: Object.values(valueRanges),
+            backgroundColor: '#00AE8C',
+            borderWidth: 1
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            title: {
+              display: true,
+              text: 'Donor Lifetime Value Distribution'
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              title: {
+                display: true,
+                text: 'Number of Donors'
+              }
+            }
+          }
+        }
+      });
+    }
+
+    // Update recurring vs one-time donors chart
+    function updateRecurringChart(donations) {
+      const donorCounts = {};
+      
+      donations.forEach(donation => {
+        if (donation.name && donation.phone) {
+          const donorKey = `${donation.name}_${donation.phone}`;
+          donorCounts[donorKey] = (donorCounts[donorKey] || 0) + 1;
+        }
+      });
+      
+      const oneTimeDonors = Object.values(donorCounts).filter(count => count === 1).length;
+      const recurringDonors = Object.values(donorCounts).filter(count => count > 1).length;
+      
+      const ctx = document.getElementById('recurringChart').getContext('2d');
+      
+      if (recurringChart) {
+        recurringChart.destroy();
+      }
+      
+      recurringChart = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+          labels: ['One-Time Donors', 'Recurring Donors'],
+          datasets: [{
+            data: [oneTimeDonors, recurringDonors],
+            backgroundColor: ['#00AE8C', '#009900'],
+            borderWidth: 1
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            title: {
+              display: true,
+              text: 'Recurring vs One-Time Donors'
+            },
+            legend: {
+              position: 'bottom'
+            }
+          }
+        }
+      });
+    }
+
+    // Update state chart
+    function updateStateChart(donations) {
+      const stateData = {};
+      
+      donations.forEach(donation => {
+        const state = donation.state || 'Unknown';
+        const quantity = parseFloat(donation.quantity) || 0;
+        
+        if (!stateData[state]) {
+          stateData[state] = 0;
+        }
+        
+        stateData[state] += quantity;
+      });
+      
+      // Sort by quantity and take top 10
+      const sortedStates = Object.entries(stateData)
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 10);
+      
+      const labels = sortedStates.map(item => item[0]);
+      const data = sortedStates.map(item => item[1]);
+      
+      const ctx = document.getElementById('stateChart').getContext('2d');
+      
+      if (stateChart) {
+        stateChart.destroy();
+      }
+      
+      stateChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: labels,
+          datasets: [{
+            label: 'Quantity (kg)',
+            data: data,
+            backgroundColor: '#00AE8C',
+            borderWidth: 1
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            title: {
+              display: true,
+              text: 'Top 10 States by Donations'
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              title: {
+                display: true,
+                text: 'Quantity (kg)'
+              }
+            }
+          }
+        }
+      });
+    }
+
+    // Update regional chart (group states by region)
+    function updateRegionalChart(donations) {
+      // Define regions (simplified for Malaysia)
+      const regions = {
+        'Central': ['Selangor', 'Wilayah Persekutuan Kuala Lumpur', 'Wilayah Persekutuan Putrajaya'],
+        'Southern': ['Johor', 'Melaka', 'Negeri Sembilan'],
+        'Northern': ['Pulau Pinang', 'Kedah', 'Perlis', 'Perak'],
+        'East Coast': ['Kelantan', 'Terengganu', 'Pahang'],
+        'Borneo': ['Sabah', 'Sarawak', 'Wilayah Persekutuan Labuan']
+      };
+      
+      const regionData = {};
+      
+      // Initialize regions
+      Object.keys(regions).forEach(region => {
+        regionData[region] = 0;
+      });
+      regionData['Unknown'] = 0;
+      
+      // Sum donations by region
+      donations.forEach(donation => {
+        const state = donation.state;
+        const quantity = parseFloat(donation.quantity) || 0;
+        
+        let found = false;
+        for (const [region, states] of Object.entries(regions)) {
+          if (states.includes(state)) {
+            regionData[region] += quantity;
+            found = true;
+            break;
+          }
+        }
+        
+        if (!found) {
+          regionData['Unknown'] += quantity;
+        }
+      });
+      
+      const labels = Object.keys(regionData);
+      const data = Object.values(regionData);
+      
+      const ctx = document.getElementById('regionalChart').getContext('2d');
+      
+      if (regionalChart) {
+        regionalChart.destroy();
+      }
+      
+      regionalChart = new Chart(ctx, {
+        type: 'pie',
+        data: {
+          labels: labels,
+          datasets: [{
+            data: data,
+            backgroundColor: ['#00AE8C', '#009900', '#006600', '#003300', '#80CBC4', '#4DB6AC'],
+            borderWidth: 1
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            title: {
+              display: true,
+              text: 'Donations by Region'
+            },
+            legend: {
+              position: 'bottom'
+            }
+          }
+        }
+      });
+    }
+
+    // Update top states list
+    function updateTopStatesList(donations) {
+      const stateData = {};
+      
+      donations.forEach(donation => {
+        const state = donation.state || 'Unknown';
+        const quantity = parseFloat(donation.quantity) || 0;
+        
+        if (!stateData[state]) {
+          stateData[state] = 0;
+        }
+        
+        stateData[state] += quantity;
+      });
+      
+      // Sort by quantity and take top 5
+      const sortedStates = Object.entries(stateData)
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 5);
+      
+      const topStatesList = document.getElementById('top-states-list');
+      topStatesList.innerHTML = '';
+      
+      sortedStates.forEach(([state, quantity], index) => {
+        const item = document.createElement('div');
+        item.className = 'insight-item';
+        item.innerHTML = `
+          <div class="insight-icon">${index + 1}</div>
+          <div><strong>${state}</strong>: ${quantity.toFixed(2)} kg</div>
+        `;
+        topStatesList.appendChild(item);
+      });
+    }
+
+    // Update growth potential list
+    function updateGrowthPotentialList(donations) {
+      // This is a simplified implementation
+      // In a real app, you would use more sophisticated algorithms
+      const stateData = {};
+      const allStates = [
+        'Johor', 'Kedah', 'Kelantan', 'Melaka', 'Negeri Sembilan',
+        'Pahang', 'Perak', 'Perlis', 'Pulau Pinang', 'Sabah',
+        'Sarawak', 'Selangor', 'Terengganu', 
+        'Wilayah Persekutuan Kuala Lumpur', 'Wilayah Persekutuan Labuan', 'Wilayah Persekutuan Putrajaya'
+      ];
+      
+      // Initialize all states
+      allStates.forEach(state => {
+        stateData[state] = 0;
+      });
+      stateData['Unknown'] = 0;
+      
+      // Sum donations by state
+      donations.forEach(donation => {
+        const state = donation.state || 'Unknown';
+        const quantity = parseFloat(donation.quantity) || 0;
+        
+        if (stateData.hasOwnProperty(state)) {
+          stateData[state] += quantity;
+        } else {
+          stateData['Unknown'] += quantity;
+        }
+      });
+      
+      // Calculate average donation per state
+      const totalDonations = Object.values(stateData).reduce((sum, qty) => sum + qty, 0);
+      const avgPerState = totalDonations / (allStates.length - 1); // Exclude Unknown
+      
+      // Find states with below-average performance
+      const growthStates = allStates.filter(state => 
+        stateData[state] < avgPerState && stateData[state] > 0
+      ).sort((a, b) => stateData[a] - stateData[b]).slice(0, 3);
+      
+      const growthPotentialList = document.getElementById('growth-potential-list');
+      growthPotentialList.innerHTML = '';
+      
+      if (growthStates.length === 0) {
+        growthPotentialList.innerHTML = '<p>All states are performing well.</p>';
+        return;
+      }
+      
+      growthStates.forEach(state => {
+        const potential = ((avgPerState - stateData[state]) / avgPerState * 100).toFixed(1);
+        const item = document.createElement('div');
+        item.className = 'insight-item';
+        item.innerHTML = `
+          <div class="insight-icon"><i class="fas fa-arrow-up"></i></div>
+          <div><strong>${state}</strong>: ${potential}% growth potential</div>
+        `;
+        growthPotentialList.appendChild(item);
+      });
+    }
+
+    // Update comparison chart
+    function updateComparisonChart(currentDonations, previousDonations) {
+      const currentTotal = currentDonations.reduce((sum, donation) => 
+        sum + (parseFloat(donation.quantity) || 0), 0);
+      const previousTotal = previousDonations.reduce((sum, donation) => 
+        sum + (parseFloat(donation.quantity) || 0), 0);
+      
+      const ctx = document.getElementById('comparisonChart').getContext('2d');
+      
+      if (comparisonChart) {
+        comparisonChart.destroy();
+      }
+      
+      comparisonChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: ['Current Period', 'Previous Period'],
+          datasets: [{
+            label: 'Total Donations (kg)',
+            data: [currentTotal, previousTotal],
+            backgroundColor: ['#00AE8C', '#009900'],
+            borderWidth: 1
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            title: {
+              display: true,
+              text: 'Period Comparison'
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              title: {
+                display: true,
+                text: 'Quantity (kg)'
+              }
+            }
+          }
+        }
+      });
+    }
+
+    // Update event comparison chart
+    function updateEventComparisonChart(donations) {
+      const eventData = {};
+      
+      donations.forEach(donation => {
+        const eventName = donation.eventName || 'Unknown Event';
+        const quantity = parseFloat(donation.quantity) || 0;
+        
+        if (!eventData[eventName]) {
+          eventData[eventName] = 0;
+        }
+        
+        eventData[eventName] += quantity;
+      });
+      
+      // Sort by quantity and take top 5
+      const sortedEvents = Object.entries(eventData)
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 5);
+      
+      const labels = sortedEvents.map(item => item[0]);
+      const data = sortedEvents.map(item => item[1]);
+      
+      const ctx = document.getElementById('eventComparisonChart').getContext('2d');
+      
+      if (eventComparisonChart) {
+        eventComparisonChart.destroy();
+      }
+      
+      eventComparisonChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: labels,
+          datasets: [{
+            label: 'Quantity (kg)',
+            data: data,
+            backgroundColor: '#00AE8C',
+            borderWidth: 1
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            title: {
+              display: true,
+              text: 'Top 5 Events by Donations'
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              title: {
+                display: true,
+                text: 'Quantity (kg)'
+              }
+            }
+          }
+        }
+      });
+    }
+
+    // Update year-over-year chart
+    function updateYOYChart(donations) {
+      const currentYear = new Date().getFullYear();
+      const lastYear = currentYear - 1;
+      
+      const currentYearData = Array(12).fill(0);
+      const lastYearData = Array(12).fill(0);
+      
+      donations.forEach(donation => {
+        if (!donation.timestamp) return;
+        
+        const date = donation.timestamp.toDate ? donation.timestamp.toDate() : new Date(donation.timestamp);
+        const month = date.getMonth();
+        const quantity = parseFloat(donation.quantity) || 0;
+        
+        if (date.getFullYear() === currentYear) {
+          currentYearData[month] += quantity;
+        } else if (date.getFullYear() === lastYear) {
+          lastYearData[month] += quantity;
+        }
+      });
+      
+      const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 
+                         'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+      
+      const ctx = document.getElementById('yoyChart').getContext('2d');
+      
+      if (yoyChart) {
+        yoyChart.destroy();
+      }
+      
+      yoyChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: monthNames,
+          datasets: [
+            {
+              label: `${currentYear}`,
+              data: currentYearData,
+              borderColor: '#00AE8C',
+              backgroundColor: 'rgba(0, 174, 140, 0.1)',
+              borderWidth: 2,
+              fill: false
+            },
+            {
+              label: `${lastYear}`,
+              data: lastYearData,
+              borderColor: '#009900',
+              backgroundColor: 'rgba(0, 153, 0, 0.1)',
+              borderWidth: 2,
+              fill: false
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            title: {
+              display: true,
+              text: 'Year-over-Year Comparison'
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              title: {
+                display: true,
+                text: 'Quantity (kg)'
+              }
+            }
+          }
+        }
+      });
+    }
+
+    // Update benchmark chart (simplified)
+    function updateBenchmarkChart(donations) {
+      // This is a simplified benchmark - in a real app, you'd compare with industry standards
+      const totalQuantity = donations.reduce((sum, donation) => 
+        sum + (parseFloat(donation.quantity) || 0), 0);
+      
+      // Simplified benchmarks (these would come from industry data in a real app)
+      const benchmarks = {
+        'Your Performance': totalQuantity,
+        'Industry Average': totalQuantity * 0.8, // 80% of your performance
+        'Top Performers': totalQuantity * 1.2    // 120% of your performance
+      };
+      
+      const ctx = document.getElementById('benchmarkChart').getContext('2d');
+      
+      if (benchmarkChart) {
+        benchmarkChart.destroy();
+      }
+      
+      benchmarkChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: Object.keys(benchmarks),
+          datasets: [{
+            label: 'Total Donations (kg)',
+            data: Object.values(benchmarks),
+            backgroundColor: ['#00AE8C', '#009900', '#006600'],
+            borderWidth: 1
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            title: {
+              display: true,
+              text: 'Performance Benchmarking'
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              title: {
+                display: true,
+                text: 'Quantity (kg)'
+              }
+            }
+          }
+        }
+      });
+    }
+
+    // Update data table with detailed information
+    function updateDataTable(donations) {
+      const tableBody = document.getElementById('data-table-body');
+      tableBody.innerHTML = '';
+      
+      donations.forEach(donation => {
+        let date = 'N/A';
+        if (donation.timestamp) {
+          const donationDate = donation.timestamp.toDate ? donation.timestamp.toDate() : new Date(donation.timestamp);
+          date = donationDate.toLocaleDateString('en-US');
+        }
+        
+        // Calculate points (simplified)
+        const quantity = parseFloat(donation.quantity) || 0;
+        const points = Math.round(quantity * 10); // 10 points per kg
+        
+        const row = document.createElement('tr');
+        
+        row.innerHTML = `
+          <td>${date}</td>
+          <td>${donation.name || 'N/A'}</td>
+          <td>${donation.phone || 'N/A'}</td>
+          <td>${donation.eventName || 'N/A'}</td>
+          <td>${donation.station || 'N/A'}</td>
+          <td>${donation.state || 'N/A'}</td>
+          <td>${quantity.toFixed(2)}</td>
+          <td>${donation.total || 'N/A'}</td>
+          <td>${points}</td>
+        `;
+        
+        tableBody.appendChild(row);
+      });
+    }
+
+    // Event listeners for filters and controls
+    document.getElementById('event-filter').addEventListener('change', updateAnalytics);
+    document.getElementById('date-range').addEventListener('change', function() {
+      const customRange = document.getElementById('custom-date-range');
+      customRange.style.display = this.value === 'custom' ? 'flex' : 'none';
+      updateAnalytics();
+    });
+    
+    document.getElementById('start-date').addEventListener('change', updateAnalytics);
+    document.getElementById('end-date').addEventListener('change', updateAnalytics);
+    document.getElementById('granularity').addEventListener('change', updateAnalytics);
+    
+    // Tab functionality
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.addEventListener('click', function() {
+        // Remove active class from all buttons and contents
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+        
+        // Add active class to clicked button
+        this.classList.add('active');
+        
+        // Show corresponding content
+        const tabId = this.getAttribute('data-tab');
+        document.getElementById(`${tabId}-tab`).classList.add('active');
+        
+        // Update charts for the active tab
+        updateAnalytics();
+      });
+    });
+    
+    // Export functionality
+    document.getElementById('export-csv').addEventListener('click', function() {
+      exportToCSV();
+    });
+    
+    document.getElementById('export-pdf').addEventListener('click', function() {
+      exportToPDF();
+    });
+    
+    document.getElementById('export-report').addEventListener('click', function() {
+      generateReport();
+    });
+    
+    function exportToCSV() {
+      // Simple CSV export implementation
+      let csvContent = "Date,Donor Name,Phone,Event,Station,State,Quantity (kg),Total (RM),Points\n";
+      
+      allDonations.forEach(donation => {
+        let date = 'N/A';
+        if (donation.timestamp) {
+          const donationDate = donation.timestamp.toDate ? donation.timestamp.toDate() : new Date(donation.timestamp);
+          date = donationDate.toLocaleDateString('en-US');
+        }
+        
+        const quantity = parseFloat(donation.quantity) || 0;
+        const points = Math.round(quantity * 10);
+        
+        const row = [
+          date,
+          donation.name || '',
+          donation.phone || '',
+          donation.eventName || '',
+          donation.station || '',
+          donation.state || '',
+          quantity.toFixed(2),
+          donation.total || '',
+          points
+        ].map(field => `"${field}"`).join(',');
+        
+        csvContent += row + "\n";
+      });
+      
+      const blob = new Blob([csvContent], { type: 'text/csv' });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'donations.csv';
+      a.click();
+      window.URL.revokeObjectURL(url);
+    }
+    
+    function exportToPDF() {
+      alert('PDF export would be implemented with a library like jsPDF');
+      // In a real implementation, you would use jsPDF to generate a PDF report
+    }
+    
+    function generateReport() {
+      alert('Report generation feature would create a comprehensive analytics report');
+      // In a real implementation, this would generate a detailed report with insights
+    }
+
+    // Initialize custom date range to current month
+    const today = new Date();
+    const firstDay = new Date(today.getFullYear(), today.getMonth(), 1);
+    
+    document.getElementById('start-date').value = firstDay.toISOString().split('T')[0];
+    document.getElementById('end-date').value = today.toISOString().split('T')[0];
+  </script>
+</body>
+</html>

@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Passionate About Progress</title>
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js"></script>
+  <link rel="stylesheet" href="menu.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css">
+</head>
+
+<body>
+  <nav>
+    <a href="menu.html" class="logo-link">
+        <img src="Web (44).svg" alt="Logo" class="logo" />
+    </a>
+
+    <ul class="nav-links">
+        <li><a href="Letsdonate.html">LET'S DONATE</a></li>
+        <li><a href="leaderboards.html">LEADERBOARDS</a></li>
+        <li><a href="chart.html">CHARTS</a></li>
+        <!-- <li><a href="menu.html">SUSTAINABILITY</a></li> -->
+        <li><a href="forum.html">FORUM</a></li>
+        <li><a href="ContactUs.html">CONTACT US</a></li>
+        <li><a href="AboutUs.html">ABOUT US</a></li>
+        <li><a href="quiz chemistry.html">QUIZ</a></li>
+        <li><a href="user.html">USER</a></li>
+        <li><a href="signup.html" id="signUpBtn">SIGN UP</a></li>
+        <li><a href="login.html" id="logInBtn">LOG IN</a></li>
+        <li><a href="javascript:void(0)" id="logOutBtn" style="display: none;">LOG OUT</a></li>
+        <li id="userRole" style="display: none; font-family: 'Poppins', sans-serif;"></li>
+    </ul>
+
+    <div class="hamburger">
+      <div></div>
+      <div></div>
+      <div></div>
+    </div>
+  </nav>
+
+  <script type="module">
+    // Firebase configuration
+    const firebaseConfig = {
+        apiKey: "AIzaSyBdDwCslP5RGHi37xjFo89x8rY3kKbhUwQ",
+        authDomain: "semulight-db.firebaseapp.com",
+        projectId: "semulight-db",
+        storageBucket: "semulight-db.firebasestorage.app",
+        messagingSenderId: "693934626490",
+        appId: "1:693934626490:web:87c36c26026509f86f1483",
+        measurementId: "G-QFFLDWLW2L"
+    };
+
+    // Initialize Firebase
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js';
+    import { getAuth, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/9.22.1/firebase-auth.js';
+    import { getFirestore, doc, getDoc } from 'https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js';
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    // Check if user is logged in
+    onAuthStateChanged(auth, function(user) {
+        if (user) {
+            // User is signed in
+            document.getElementById('logInBtn').style.display = 'none';
+            document.getElementById('signUpBtn').style.display = 'none';
+            document.getElementById('logOutBtn').style.display = 'inline-block';
+            document.getElementById('userRole').style.display = 'inline-block';
+
+            // Get user role from Firestore
+            const userRef = doc(db, "users", user.uid);
+            getDoc(userRef).then((docSnapshot) => {
+                if (docSnapshot.exists()) {
+                    const role = docSnapshot.data().role;
+                    document.getElementById('userRole').textContent = role.charAt(0).toUpperCase() + role.slice(1);
+                }
+            }).catch((error) => {
+                console.error("Error getting user document:", error);
+            });
+        } else {
+            // User is signed out
+            document.getElementById('logInBtn').style.display = 'inline-block';
+            document.getElementById('signUpBtn').style.display = 'inline-block';
+            document.getElementById('logOutBtn').style.display = 'none';
+            document.getElementById('userRole').style.display = 'none';
+        }
+    });
+
+    // Log out functionality
+    document.getElementById('logOutBtn').addEventListener('click', function() {
+        signOut(auth).then(() => {
+            window.location.href = "menu.html"; // You can adjust this as needed for guest/public access
+        }).catch((error) => {
+            console.error("Error signing out:", error);
+        });
+    });
+
+    
+  </script>
+
+
+<script>
+  let prevScrollPos = window.pageYOffset; // Get the initial scroll position
+
+  window.onscroll = function() {
+    let currentScrollPos = window.pageYOffset; // Get the current scroll position
+    const nav = document.querySelector('nav'); // Select the nav element
+
+    if (prevScrollPos > currentScrollPos) {
+      // Scroll up - Show the navigation bar
+      nav.style.top = "0";
+    } else {
+      // Scroll down - Hide the navigation bar
+      nav.style.top = "-120px"; // You can adjust this value according to your navbar height
+    }
+    
+    prevScrollPos = currentScrollPos; // Update the previous scroll position
+  };
+
+
+document.querySelector('.hamburger').addEventListener('click', function() {
+  const navLinks = document.querySelector('.nav-links');
+  navLinks.classList.toggle('active');
+});
+
+</script>
+
+
+
+<!-- HEADER VIDEO -->
+<div class="section-box">
+  <video autoplay muted loop width="100%">
+    <source src="Pengumpulan Minyak Masak Terpakai (UCO) diluaskan di stesen PETRONAS - PETRONAS Brands (1080p, h264).mp4" type="video/mp4">
+  </video>
+</div>
+
+
+
+<div class="dummycontainer"></div>
+
+<div class="textbelowheader">
+  <h1 style="font-weight: bold; color: black;">Continuing Our Legacy Together</h1>
+  <h1 style="color: #00AE8C; font-weight: bold;">For Our Future</h1>
+  <br>
+  <p style="font-size: 18px ; padding-left: 50px; padding-right: 50px; font-family: 'Poppins', sans-serif; color: black;">"By recycling used cooking oil, we can turn waste into valuable resources, reduce environmental pollution, and contribute to a more sustainable future.Let's take action today and make a difference!</p>
+</div>
+
+<!-- dummy container -->
+ <div class="dummycontainer"></div>
+ 
+ <!-- UCO SECTION -->
+<section class="image-section-uco">
+  <div class="image-wrapper-uco">
+    <img class="image-element" src="purplebackground.svg" alt="Background Image">
+  </div>
+
+  <!-- Decorative elements -->
+  <div class="uco-decoration circle-1"></div>
+  <div class="uco-decoration circle-2"></div>
+
+  <div class="uco-content-on-image">
+    <div class="uco-main-box">
+      <!-- Reduce, Reuse, Recycle Text -->
+      <div class="uco-eco-text">
+        <h1>Store, Drop-Off, Sell</h1>
+        <p>Join us in our mission to promote sustainability and protect our environment for future generations!</p>
+      </div>
+
+      <!-- ROW 1 - 3 ITEMS -->
+      <div class="uco-items-row">
+        <!-- ITEM 1 -->
+        <div class="uco-box">
+          <div class="uco-img-wrapper">
+            <img class="uco-img-default" src="Web (34).svg" alt="Reduce">
+            <img class="uco-img-hover" src="Web (32).svg" alt="Reduce Hover">
+          </div>
+          <div class="uco-text-content">
+            <h2 class="uco-subject">Store</h2>
+            <p class="uco-subtitle">Let the used cooking oil cool and store in suitable containers</p>
+            <a href="Letsdonate.html" class="uco-chapter-button">Let's Contribute!</a>
+          </div>
+        </div>
+
+        <!-- ITEM 2 -->
+        <div class="uco-box">
+          <div class="uco-img-wrapper">
+            <img class="uco-img-default" src="Web (35).svg" alt="Reuse">
+            <img class="uco-img-hover" src="Web (32).svg" alt="Reuse Hover">
+          </div>
+          <div class="uco-text-content">
+            <h2 class="uco-subject">Drop-off</h2>
+            <p class="uco-subtitle">Drop off your used cooking oil at the selected station</p>
+            <a href="Letsdonate.html" class="uco-chapter-button">Let's Contribute!</a>
+          </div>
+        </div>
+
+        <!-- ITEM 3 -->
+        <div class="uco-box">
+          <div class="uco-img-wrapper">
+            <img class="uco-img-default" src="Web (36).svg" alt="Recycle">
+            <img class="uco-img-hover" src="Web (32).svg" alt="Recycle Hover">
+          </div>
+          <div class="uco-text-content">
+            <h2 class="uco-subject">Sell</h2>
+            <p class="uco-subtitle">Sell ​​your used cooking oil at market price</p>
+            <a href="Letsdonate.html" class="uco-chapter-button">Let's Contribute!</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+
+<!-- BIOLOGY SECTION -->
+<section class="image-section-biology">
+  <div class="image-wrapper-biology">
+      <img class="image-element" src="Web (10).svg" alt="Background Image">
+  </div>
+
+  <div class="content-on-image">
+    <div class="container biology-main-box">
+      <!-- ROW 1 - 3 ITEMS -->
+      <div class="items-row">
+        <!-- ITEM 1 -->
+        <div class="biology-box">
+          <div class="biology-text-content">
+            <h2 class="biology-subject">PETRONAS Masjid Tanah Station</h2>
+            <p class="subtitle">3 August 2025 (Sunday), 10AM - 3PM</p>
+            <p class="subtitle">7 September 2025 (Sunday), 10AM - 3PM</p>
+            <a href="https://www.google.com/maps/dir//PETRONAS+Bandar+Jasin+Bestari,+Jalan+Bunga+Raya,+Bandar+Jasin+Bestari,+Bemban,+Malacca/@2.277246,102.3546087,13z/data=!3m2!4b1!5s0x31cc39df2660c8f1:0xa060cb1329690a2d!4m9!4m8!1m0!1m5!1m1!1s0x31d1e7b270821a2d:0x5f08a8c6b3f1769d!2m2!1d102.3958084!2d2.2772466!3e0?entry=ttu" class="chapter-button">Get Direction</a>
+          </div>
+          <div class="img-wrapper">
+            <img class="img-default" src="Web.svg" alt="Image 1">
+            <img class="img-hover" src="Web (2).svg" alt="Image 1 Hover">
+          </div>
+        </div>
+        
+        <!-- ITEM 2 -->
+        <div class="biology-box">
+          <div class="biology-text-content">
+            <h2 class="biology-subject">PETRONAS Jalan Bakri 2, Muar, Johor Station</h2>
+            <p class="subtitle">2 August 2025 (Saturday), 10AM - 3PM</p>
+            <p class="subtitle">6 September 2025 (Saturday), 10AM - 3PM</p>
+            <a href="https://www.google.com/maps/dir//Petronas+Jln+Haji+Kosai,+Lot+3116,+Jalan+Bakri,+Kampung+Parit+Keroma+Darat,+84000+Muar,+Johor/@2.0472911,102.5564815,13z/data=!3m1!4b1!4m9!4m8!1m0!1m5!1m1!1s0x31d1b9c572784d95:0x29d8baec47ea6d75!2m2!1d102.5976826!2d2.0473363!3e0?entry=ttu" class="chapter-button">Get Direction</a>
+          </div>
+          <div class="img-wrapper">
+            <img class="img-default" src="Web.svg" alt="Image 2">
+            <img class="img-hover" src="Web (2).svg" alt="Image 2 Hover">
+          </div>
+        </div>
+        
+        <!-- ITEM 3 -->
+        <div class="biology-box">
+          <div class="biology-text-content">
+            <h2 class="biology-subject">PETRONAS Taman Tun Dr Ismail Station</h2>
+            <p class="subtitle">24 August 2025 (Sunday), 10AM - 3PM</p>
+            <p class="subtitle">28 September 2025 (Sunday), 10AM - 3PM</p>
+            <a href="https://www.google.com/maps/dir//Petronas+-+Taman+Tun+Doctor+Ismail,+Lot+29395+%26+29396,+Persiaran+Zaaba,+Taman+Tun+Dr+Ismail,+60000+Kuala+Lumpur,+Wilayah+Persekutuan/@3.1421108,101.5843267,17363m/data=!3m1!1e3!4m9!4m8!1m0!1m5!1m1!1s0x31cc4930212a16b9:0x710dfc12651c987d!2m2!1d101.6255264!2d3.1420259!3e0?entry=ttu&g_ep=EgoyMDI1MDcyOC4wIKXMDSoASAFQAw%3D%3D" class="chapter-button">Get Direction</a>
+          </div>
+          <div class="img-wrapper">
+            <img class="img-default" src="Web.svg" alt="Image 3">
+            <img class="img-hover" src="Web (2).svg" alt="Image 3 Hover">
+          </div>
+        </div>
+      </div>
+      
+      <!-- ROW 2 - 2 ITEMS (CENTERED) -->
+      <div class="items-row centered-row">
+        <!-- ITEM 4 -->
+        <div class="biology-box">
+          <div class="biology-text-content">
+            <h2 class="biology-subject">PETRONAS Rantau PETRONAS Station</h2>
+            <p class="subtitle">23 August 2025 (Saturday), 10AM - 3PM</p>
+            <p class="subtitle">20 September 2025 (Saturday), 10AM - 3PM</p>
+            <a href="https://www.google.com/maps/dir//Petronas+Rantau,+Pasaraya+TMC,+Jalan+Kemaman+-+Dungun,+Kampung+Baru,+Kemasik,+Terengganu/@4.4363533,103.4434236,16.18z/data=!3m1!5s0x31cc39df2660c8f1:0xa060cb1329690a2d!4m9!4m8!1m0!1m5!1m1!1s0x31c87145f1f4d489:0x34ce6bde05362f5a!2m2!1d103.4495335!2d4.4387409!3e0?entry=ttu" class="chapter-button">Get Direction</a>
+          </div>
+          <div class="img-wrapper">
+            <img class="img-default" src="Web.svg" alt="Image 4">
+            <img class="img-hover" src="Web (2).svg" alt="Image 4 Hover">
+          </div>
+        </div>
+        
+        <!-- ITEM 5 -->
+        <div class="biology-box">
+          <div class="biology-text-content">
+            <h2 class="biology-subject">PETRONAS Jalan Sultan Azlan Shah Station</h2>
+            <p class="subtitle">10 August 2025 (Sunday), 10AM - 3PM</p>
+            <p class="subtitle">14 September 2025 (Sunday), 10AM - 3PM</p>
+            <a href="https://www.google.com/maps/dir//PETRONAS+-+Jalan+Sultan+Azlan+Shah,+Jalan+Sultan+Azlan+Shah,+Bandar+Baru+Medan+Ipoh,+Ipoh,+Perak/@4.6208848,101.0753661,13z/data=!3m1!4b1!4m9!4m8!1m0!1m5!1m1!1s0x31caed2077b3b279:0xf4b2438569e5aeff!2m2!1d101.116566!2d4.620886!3e0?entry=ttu&g_ep=EgoyMDI1MDUyOC4wIKXMDSoASAFQAw%3D%3D" class="chapter-button">Get Direction</a>
+          </div>
+          <div class="img-wrapper">
+            <img class="img-default" src="Web.svg" alt="Image 5">
+            <img class="img-hover" src="Web (2).svg" alt="Image 5 Hover">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- dummy -->
+<!-- <div class="dummycontainer"></div>
+ -->
+
+<div class="sliderbody">
+  <div class="slider">
+    <div class="slide-track">
+      <!-- First set -->
+      <div class="slide"><img class="imgslide" src="uco1.jpeg" alt="Slide 1"></div>
+      <div class="slide"><img class="imgslide" src="uco6.webp" alt="Slide 2"></div>
+      <div class="slide"><img class="imgslide" src="uco3.webp" alt="Slide 3"></div>
+      <div class="slide"><img class="imgslide" src="uco4.jpg" alt="Slide 4"></div>
+      <div class="slide"><img class="imgslide" src="uco5.jpeg" alt="Slide 5"></div>
+      <div class="slide"><img class="imgslide" src="uco6.jpg" alt="Slide 6"></div>
+
+      <div class="slide"><img class="imgslide" src="uco1.jpeg" alt="Slide 1"></div>
+      <div class="slide"><img class="imgslide" src="uco6.webp" alt="Slide 2"></div>
+      <div class="slide"><img class="imgslide" src="uco3.webp" alt="Slide 3"></div>
+      <div class="slide"><img class="imgslide" src="uco4.jpg" alt="Slide 4"></div>
+      <div class="slide"><img class="imgslide" src="uco5.jpeg" alt="Slide 5"></div>
+      <div class="slide"><img class="imgslide" src="uco6.jpg" alt="Slide 6"></div>
+      
+      <div class="slide"><img class="imgslide" src="uco1.jpeg" alt="Slide 1"></div>
+      <div class="slide"><img class="imgslide" src="uco6.webp" alt="Slide 2"></div>
+      <div class="slide"><img class="imgslide" src="uco3.webp" alt="Slide 3"></div>
+      <div class="slide"><img class="imgslide" src="uco4.jpg" alt="Slide 4"></div>
+      <div class="slide"><img class="imgslide" src="uco5.jpeg" alt="Slide 5"></div>
+      <div class="slide"><img class="imgslide" src="uco6.jpg" alt="Slide 6"></div>
+
+    </div>
+  </div>
+</div>
+
+        
+  
+
+<div class="background-container bg1">
+  <!-- <div class="text-content-background bottom-left-background">
+    <h2>Exploring UCO (Used Cooking Oil)</h2>
+    <p>
+      UCO is a valuable resource that can be recycled into biodiesel, a renewable energy source that helps reduce our dependency on fossil fuels. By recycling used cooking oil, we can not only reduce waste but also contribute to environmental conservation, lower carbon emissions, and promote a sustainable energy future. Each drop of UCO plays a role in our shared mission to protect the planet for future generations
+    </p>
+  </div> -->
+</div>
+
+
+<!-- ASTRONOMY SECTION -->
+<div class="astronomy-container">
+
+
+  <div class="astronomy-overlay">
+
+    <!-- First Box -->
+<div class="astronomy-box" onclick="location.href='leaderboards.html'">
+  <img src="Web (11).svg" class="fill-box-img" alt="Space Image">
+  <div class="astronomy-text center-text">
+    <!-- <h2>EXPLORE SPACE</h2>
+    <p>Learn like never before</p> -->
+  </div>
+</div>
+
+<!-- Second box -->
+<div class="astronomy-box" onclick="location.href='chart.html'">
+  <img src="Web (12).svg" class="fill-box-img" alt="Galaxy">
+  <div class="astronomy-text top-left-text">
+    <!-- <h2>SOLAR SPACE?</h2>
+    <p>Explore without hesitation.</p> -->
+  </div>
+</div>
+
+
+  </div>
+</div>
+
+
+<div class="background-container bg2">
+  <!-- <div class="text-content-background top-left-background">
+    <h2>Harnessing the Power of UCO</h2>
+    <p>
+      Used Cooking Oil (UCO) is a key resource in the fight against pollution. By recycling UCO, we transform waste into a valuable asset that can be turned into eco-friendly biodiesel. This process not only helps in reducing environmental impact but also contributes to cleaner energy production, creating a more sustainable future for everyone.
+    </p>
+  </div> -->
+</div>
+
+
+<!-- <section class="bottom-video-section">
+  <video class="bottom-video" autoplay muted loop playsinline>
+    <source src="oil.mp4" type="video/mp4">
+    Your browser does not support the video tag.
+  </video>
+
+
+  <div class="bottom-video-overlay">
+    <h2 style="color: #9B4DCA;">Empower Sustainability</h2>
+    <p>Turn used cooking oil into a greener future.</p>
+  </div>
+</section> -->
+
+<!-- dummy -->
+<!-- <div class="dummycontainer"></div> -->
+
+<div class="chemistry-container">
+  <!-- Background image -->
+  <img class="background-image" src="Web (15).svg" alt="Background Image">
+
+
+  <div class="atoms-grid">
+  <a href="quiz chemistry.html" class="atom" style="--img: url('Web\ \(23\).svg');"></a>
+  <a href="quiz chemistry.html" class="atom" style="--img: url('Web\ \(24\).svg');"></a>
+  <a href="quiz chemistry.html" class="atom center" style="--img: url('Web\ \(25\).svg');"></a>
+  <a href="quiz chemistry.html" class="atom" style="--img: url('Web\ \(26\).svg');"></a>
+  <a href="quiz chemistry.html" class="atom" style="--img: url('Web\ \(27\).svg');"></a>
+</div>
+
+</div>
+
+
+<!-- slider chemistry -->
+ <div class="bodychemistry">
+<input  type="radio" name="position" />
+    <input type="radio" name="position" />
+    <input type="radio" name="position" checked/>
+    <input type="radio" name="position" />
+    <input type="radio" name="position" />
+    <main id="carousel">
+      <div class="item">
+        <img src="greta.jpeg">
+        <h3 class="name">Greta Thunberg</h3>
+        <p class="facts" style="font-family: 'Poppins', sans-serif;">"I want you to act as if the house is on fire, because it is."</p>
+      </div>
+
+      <div class="item">
+        <img src="leonardo.jpeg">
+        <h3 class="name"> Leonardo DiCaprio</h3>
+        <p class="facts">"Climate change is real. It is happening right now."</p>
+      </div>
+
+      <div class="item">
+        <img src="wangari.jpeg">
+        <h3 class="name"> Wangari Maathai</h3>
+        <p class="facts">"It's the little things that citizens do. That's what will make the difference."</p>
+      </div>
+
+      <div class="item">
+        <img src="amorylovins.jpeg">
+        <h3 class="name">Amory Lovins</h3>
+        <p class="facts">"The most efficient energy is the energy you don’t use."</p>
+
+      </div>
+      <div class="item">
+        <img src="mahatma.jpeg">
+        <h3 class="name">Mahatma Gandhi</h3>
+        <p class="facts">"The world has enough for everyone's needs, but not everyone's greed."</p>
+      </div>
+    </main>
+    </div>
+
+
+<section class="bottom-video-section">
+  <img class="bottom-video" src="Web (21).svg" alt="Sustainability Image">
+
+  <div class="bottom-video-overlay">
+    <h2 style="color: #9B4DCA;">Empower Sustainability</h2>
+    <p>Turn used cooking oil into a greener future.</p>
+  </div>
+</section>
+
+
+<footer class="footer">
+  <div class="footer-container">
+    <div class="footer-row">
+      <div class="footer-col">
+        <h4>Company</h4>
+        <ul>
+          <li><a href="AboutUs.html">About Us</a></li>
+          <li><a href="forum.html">Forum</a></li>
+          <li><a href="ContactUs.html">Contact Us</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4>Let's Contribute</h4>
+        <ul>
+          <li><a href="Letsdonate.html">Let's Donate</a></li>
+          <li><a href="leaderboards.html">Leaderboard</a></li>
+          <li><a href="chart.html">Analytics</a></li>
+        </ul>
+      </div>
+      
+      <div class="footer-col">
+        <h4>Others</h4>
+        <ul>
+          <li><a href="quiz chemistry.html">Quiz</a></li>
+          <li><a href="user.html">User</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4>follow us</h4>
+        <div class="social-links">
+          <a href="#"><i class="fab fa-facebook-f"></i></a>
+          <a href="#"><i class="fab fa-twitter"></i></a>
+          <a href="#"><i class="fab fa-instagram"></i></a>
+          <a href="#"><i class="fab fa-linkedin-in"></i></a>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign Up | Semulight</title>
+
+  <script type="module">
+    // Import Firebase SDK Modules
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
+    import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-auth.js";
+    import { getFirestore, setDoc, doc } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
+
+    // Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyBdDwCslP5RGHi37xjFo89x8rY3kKbhUwQ",
+      authDomain: "semulight-db.firebaseapp.com",
+      projectId: "semulight-db",
+      storageBucket: "semulight-db.firebasestorage.app",
+      messagingSenderId: "693934626490",
+      appId: "1:693934626490:web:87c36c26026509f86f1483",
+      measurementId: "G-QFFLDWLW2L"
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    // Sign Up Handler
+    document.getElementById("signup-form").addEventListener("submit", async function (e) {
+      e.preventDefault();
+
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+      const role = document.getElementById("role").value;
+      const name = document.getElementById("name").value;
+      const phone = document.getElementById("phone").value;
+      const age = document.getElementById("age").value;
+
+      // Validasi umur (pastikan angka dan dalam rentang yang wajar)
+      if (isNaN(age) || age < 1 || age > 120) {
+        document.getElementById("error-message").textContent = "Please enter a valid age (1-120)";
+        return;
+      }
+
+      try {
+        // Create new user with email and password
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        const user = userCredential.user;
+
+        // Save user data to Firestore dengan 5 points bonus
+        await setDoc(doc(db, "users", user.uid), {
+          email: user.email,
+          role: role,
+          name: name,
+          phone: phone,
+          age: parseInt(age),
+          points: 5, // Bonus 5 points untuk signup
+          createdAt: new Date(),
+          signupBonus: true // Flag untuk track bonus signup
+        });
+
+        // Show success message dengan info points
+        document.getElementById("error-message").style.color = "#27ae60";
+        document.getElementById("error-message").textContent = "Account created successfully! You received 5 bonus points!";
+        
+        // Redirect setelah 2 saat supaya user boleh baca message
+        setTimeout(() => {
+          window.location.href = "menu.html"; 
+        }, 2000);
+        
+      } catch (error) {
+        // Handle any errors
+        const errorMessage = error.message;
+        document.getElementById("error-message").style.color = "#e74c3c";
+        document.getElementById("error-message").textContent = errorMessage;
+      }
+    });
+  </script>
+
+  <style>
+    /* Style your form and page here */
+    body { 
+      font-family: Arial, sans-serif; 
+      background: #f4f6f9; 
+      padding: 20px; 
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      background: linear-gradient(to bottom, #00AE8C, #9B4DCA);
+      min-height: 100vh;
+    }
+    
+    h1 { 
+      text-align: center; 
+      color: white;
+      margin-bottom: 30px;
+    }
+    
+    .form-container { 
+      max-width: 450px; 
+      margin: 0 auto; 
+      background: #fff; 
+      padding: 30px; 
+      border-radius: 10px; 
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      flex: 1;
+    }
+    
+    .form-group {
+      margin-bottom: 20px;
+    }
+    
+    label { 
+      display: block; 
+      margin-bottom: 8px; 
+      font-weight: bold;
+      color: #34495e;
+    }
+    
+    input, select { 
+      width: 100%; 
+      padding: 12px; 
+      margin: 8px 0; 
+      border-radius: 6px; 
+      border: 1px solid #ddd;
+      box-sizing: border-box;
+      font-size: 16px;
+      transition: border-color 0.3s;
+    }
+    
+    input:focus, select:focus {
+      border-color: #3498db;
+      outline: none;
+      box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+    }
+    
+    button { 
+      padding: 14px; 
+      background: #00AE8C; 
+      border: none; 
+      color: white; 
+      border-radius: 6px; 
+      cursor: pointer; 
+      width: 100%; 
+      font-size: 16px;
+      font-weight: bold;
+      transition: background 0.3s;
+      margin-top: 10px;
+    }
+    
+    button:hover {
+      background: #2980b9;
+    }
+    
+    p { 
+      text-align: center; 
+      margin-top: 20px;
+    }
+    
+    #error-message {
+      font-weight: bold;
+      margin-top: 15px;
+      padding: 10px;
+      border-radius: 5px;
+      text-align: center;
+    }
+    
+    .success-message {
+      color: #27ae60;
+      background-color: rgba(39, 174, 96, 0.1);
+      border: 1px solid #27ae60;
+    }
+    
+    .error-message {
+      color: #e74c3c;
+      background-color: rgba(231, 76, 60, 0.1);
+      border: 1px solid #e74c3c;
+    }
+    
+    .bonus-info {
+      background-color: #fff8e1;
+      border: 1px solid #ffd54f;
+      border-radius: 6px;
+      padding: 15px;
+      margin: 20px 0;
+      text-align: center;
+    }
+    
+    .bonus-info h3 {
+      color: #f57c00;
+      margin: 0 0 10px 0;
+      font-size: 1.1em;
+    }
+    
+    .bonus-info p {
+      margin: 5px 0;
+      color: #5d4037;
+    }
+    
+    .login-link {
+      color: #3498db;
+      text-decoration: none;
+    }
+    
+    .login-link:hover {
+      text-decoration: underline;
+    }
+    
+    footer {
+      text-align: center;
+      margin-top: 30px;
+      color: #7f8c8d;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Create an Account</h1>
+
+  <div class="form-container">
+    <!-- Bonus Info Box -->
+    <div class="bonus-info">
+      <h3>🎉 Sign Up Bonus!</h3>
+      <p><strong>Get 5 FREE points when you create an account!</strong></p>
+      <p>Use these points to track your environmental impact and climb the leaderboards!</p>
+    </div>
+
+    <!-- Sign Up Form -->
+    <form id="signup-form">
+      <div class="form-group">
+        <label for="name">Full Name</label>
+        <input type="text" id="name" required placeholder="Enter your full name">
+      </div>
+      
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input type="email" id="email" required placeholder="Enter your email">
+      </div>
+      
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input type="password" id="password" required placeholder="Create a password">
+      </div>
+      
+      <div class="form-group">
+        <label for="phone">Phone Number</label>
+        <input type="tel" id="phone" required placeholder="Enter your phone number">
+      </div>
+      
+      <div class="form-group">
+        <label for="age">Age</label>
+        <input type="number" id="age" min="1" max="120" required placeholder="Enter your age">
+      </div>
+      
+      <div class="form-group">
+        <label for="role">Role</label>
+        <select id="role" required>
+          <option value="" disabled selected>Select your role</option>
+          <option value="customer">Customer</option>
+          <option value="collector">Collector</option>
+          <option value="admin">Admin</option>
+        </select>
+      </div>
+      
+      <button type="submit">Sign Up & Get 5 Points!</button>
+    </form>
+
+    <div id="error-message"></div>
+    <p>Already have an account? <a href="login.html" class="login-link">Log In</a></p>
+  </div>
+
+  <footer>
+    &copy; 2023 Semulight. All rights reserved.
+  </footer>
+
+  <script>
+    // Function to update error message styling
+    function updateMessageStyling() {
+      const errorMessage = document.getElementById('error-message');
+      const messageText = errorMessage.textContent;
+      
+      if (messageText.includes('successfully')) {
+        errorMessage.className = 'success-message';
+      } else if (messageText) {
+        errorMessage.className = 'error-message';
+      } else {
+        errorMessage.className = '';
+      }
+    }
+
+    // Observe changes to error message
+    const observer = new MutationObserver(updateMessageStyling);
+    const errorMessage = document.getElementById('error-message');
+    observer.observe(errorMessage, { childList: true, characterData: true });
+  </script>
+</body>
+</html>

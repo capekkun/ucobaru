@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Used Cooking Oil Sustainability Quiz</title>
+    
+    <style>
+         @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,300;0,400;1,600&display=swap');
+
+          body {
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    /* font-family: 'Poppins', sans-serif; */
+    background-color: white;
+    text-align: center;
+    width: 100%;
+    /* max-width: 1280px; */
+    margin: 0 auto;
+  }
+        /* Navigation Styles */
+        nav {
+  width: 100%;
+  background: url('Web\ \(21\).svg');
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 15px 5%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1000;
+  transition: top 0.3s ease; /* Smooth transition for showing/hiding */
+}
+
+
+
+  .nav-logo {
+    display: flex;
+    align-items: center;
+  }
+
+  .logo {
+    width: 100px;
+    height: auto;
+    margin-right: 20px;
+  }
+
+  nav ul {
+    list-style: none;
+    display: flex;
+    gap: 1.5em;
+    align-items: center;
+  }
+
+  nav ul li {
+    position: relative;
+  }
+
+  nav ul li a {
+    color: black;
+    /* color: white; */
+    text-decoration: none;
+    font-weight: bold;
+    font-family: 'Poppins', sans-serif;
+    padding: 8px 12px;
+    display: block;
+    transition: all 0.3s ease;
+    font-size: 0.9em;
+  }
+
+nav ul li > a:hover {
+  background: linear-gradient(45deg, #8a2be2, #9400d3); /* Striking Purple Gradient */
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+#userRole {
+  background: rgba(0, 174, 140, 0.2);  /* Soft green background */
+  color: #9B4DCA;  /* Text color matching the background */
+  padding: 8px 16px;  /* Increased padding for better appearance */
+  border-radius: 20px;  /* Rounded corners for a softer look */
+  font-size: 1em;  /* Slightly larger text */
+  font-weight: bold;  /* Bold text for emphasis */
+  text-align: center;  /* Centered text */
+  display: inline-block;  /* Makes it behave like a block element */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);  /* Subtle shadow for depth */
+  transition: all 0.3s ease;  /* Smooth transition for hover effect */
+}
+
+/* hamburger button */
+    .hamburger {
+      display: none;
+      flex-direction: column;
+      cursor: pointer;
+    }
+
+    .hamburger div {
+      width: 25px;
+      height: 3px;
+      background: black;
+      margin: 4px;
+      transition: 0.3s;
+    }
+
+    /* responsive */
+    @media (max-width: 768px) {
+      .nav-links {
+        display: none;
+        position: absolute;
+        top: 60px;
+        right: 20px;
+        background: white;
+        flex-direction: column;
+        padding: 10px;
+        border: 1px solid #ddd;
+      }
+
+      .nav-links.active {
+        display: flex;
+      }
+
+      .hamburger {
+        display: flex;
+      }
+    }
+
+        /* Quiz Styles */
+        .quiz-container {
+            max-width: 800px;
+            margin: 150px auto 50px;
+            padding: 30px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            text-align: center;
+        }
+
+        h1 {
+            color: #00AE8C;
+            margin-bottom: 30px;
+        }
+
+        .question {
+            font-size: 1.3em;
+            margin-bottom: 25px;
+            color: #333;
+            font-weight: bold;
+        }
+
+        .answers {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .btn {
+            padding: 15px 25px;
+            background-color: #00AE8C;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: all 0.3s ease;
+        }
+
+        .btn:hover:not(:disabled) {
+            background-color: #008c6f;
+            transform: translateY(-2px);
+        }
+
+        .btn:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+
+        .btn.correct {
+            background-color: #27ae60;
+        }
+
+        .btn.wrong {
+            background-color: #e74c3c;
+        }
+
+        #score {
+            font-size: 1.5em;
+            font-weight: bold;
+            margin: 20px 0;
+            color: #00AE8C;
+        }
+
+        #exit-btn {
+            background-color: #95a5a6;
+            margin-top: 20px;
+        }
+
+        .info-message {
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .login-message {
+            background-color: #fff3cd;
+            border: 1px solid #ffeaa7;
+            color: #856404;
+        }
+
+        .daily-limit-message {
+            background-color: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+
+        .points-earned {
+            background-color: #d1ecf1;
+            border: 1px solid #bee5eb;
+            color: #0c5460;
+        }
+
+        .user-info {
+            background-color: #e8f5e9;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            border-left: 4px solid #00AE8C;
+        }
+
+        .points-display {
+            color: #00AE8C;
+            font-weight: bold;
+        }
+
+        @media (max-width: 768px) {
+            .answers {
+                grid-template-columns: 1fr;
+            }
+            
+            
+
+            .quiz-container {
+                margin: 120px auto 30px;
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+   <nav>
+        <a href="menu.html" class="logo-link">
+            <img src="Web (44).svg" alt="Logo" class="logo" />
+        </a>
+
+        <ul class="nav-links">
+            <li><a href="Letsdonate.html">LET'S DONATE</a></li>
+            <li><a href="leaderboards.html">LEADERBOARDS</a></li>
+            <li><a href="chart.html">CHARTS</a></li>
+            <li><a href="forum.html">FORUM</a></li>
+            <li><a href="ContactUs.html">CONTACT US</a></li>
+            <li><a href="AboutUs.html">ABOUT US</a></li>
+            <li><a href="quiz chemistry.html">QUIZ</a></li>
+            <li><a href="user.html">USER</a></li>
+            <li><a href="signup.html" id="signUpBtn">SIGN UP</a></li>
+            <li><a href="login.html" id="logInBtn">LOG IN</a></li>
+            <li><a href="javascript:void(0)" id="logOutBtn" style="display: none;">LOG OUT</a></li>
+            <li id="userRole" style="display: none; font-family: 'Poppins', sans-serif;"></li>
+        </ul>
+
+        <div class="hamburger">
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+    </nav>
+
+    <div class="quiz-container">
+        <h1>Used Cooking Oil Sustainability Quiz</h1>
+        
+        <!-- User Info -->
+        <div id="user-info" class="user-info" style="display: none;">
+            Welcome, <span id="user-name"></span>! 
+            Points: <span id="user-points" class="points-display">0</span>
+        </div>
+        
+        <!-- Messages -->
+        <div id="login-message" class="info-message login-message" style="display: none;">
+            🔒 Please log in to earn points from this quiz! (1 point per day)
+        </div>
+        
+        <div id="daily-limit-message" class="info-message daily-limit-message" style="display: none;">
+            ✅ You've already earned your daily quiz point today. Come back tomorrow!
+        </div>
+
+        <div class="question" id="question">Loading question...</div>
+        <div class="answers" id="answer-buttons"></div>
+        <button class="btn" id="next-btn" style="display: none;">Next</button>
+        <div id="score"></div>
+        <button class="btn" id="exit-btn" style="display: none;">Exit Quiz</button>
+    </div>
+
+    <!-- Navigation Script -->
+    <script>
+        // Scroll behavior for navigation
+        let prevScrollPos = window.pageYOffset;
+
+        window.onscroll = function() {
+            let currentScrollPos = window.pageYOffset;
+            const nav = document.querySelector('nav');
+
+            if (prevScrollPos > currentScrollPos) {
+                nav.style.top = "0";
+            } else {
+                nav.style.top = "-120px";
+            }
+            
+            prevScrollPos = currentScrollPos;
+        };
+
+        // Hamburger menu functionality
+        document.querySelector('.hamburger').addEventListener('click', function() {
+            this.classList.toggle('active');
+            document.querySelector('.nav-links').classList.toggle('active');
+        });
+    </script>
+
+    <!-- Firebase Script -->
+    <script type="module">
+        // Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyBdDwCslP5RGHi37xjFo89x8rY3kKbhUwQ",
+            authDomain: "semulight-db.firebaseapp.com",
+            projectId: "semulight-db",
+            storageBucket: "semulight-db.firebasestorage.app",
+            messagingSenderId: "693934626490",
+            appId: "1:693934626490:web:87c36c26026509f86f1483",
+            measurementId: "G-QFFLDWLW2L"
+        };
+
+        // Import Firebase modules
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js';
+        import { 
+            getAuth, 
+            onAuthStateChanged, 
+            signOut 
+        } from 'https://www.gstatic.com/firebasejs/9.22.1/firebase-auth.js';
+        import { 
+            getFirestore, 
+            doc, 
+            getDoc, 
+            updateDoc,
+            arrayUnion,
+            increment 
+        } from 'https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js';
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        // Global variables
+        let currentUser = null;
+        let currentUserData = null;
+        let alreadyEarnedPointsToday = false;
+
+        // Quiz questions
+        const questions = [
+    {
+        question: "Why is recycling used cooking oil important?",
+        answers: [
+            { text: "It reduces waste and pollution", correct: true },
+            { text: "It increases the cost of cooking", correct: false },
+            { text: "It creates more waste", correct: false },
+            { text: "It makes cooking oil cheaper", correct: false },
+        ]
+    },
+    {
+        question: "What can used cooking oil be turned into after recycling?",
+        answers: [
+            { text: "Biodiesel", correct: true },
+            { text: "Plastic", correct: false },
+            { text: "Glass", correct: false },
+            { text: "Steel", correct: false },
+        ]
+    },
+    {
+        question: "What is one environmental impact of improperly disposing of used cooking oil?",
+        answers: [
+            { text: "Water pollution", correct: true },
+            { text: "Increased biodiversity", correct: false },
+            { text: "Improved soil quality", correct: false },
+            { text: "More wildlife", correct: false },
+        ]
+    },
+    {
+        question: "How much used cooking oil is typically thrown away every year?",
+        answers: [
+            { text: "Approximately 1 million tons", correct: true },
+            { text: "Approximately 5 million tons", correct: false },
+            { text: "Approximately 500,000 tons", correct: false },
+            { text: "Approximately 10 million tons", correct: false },
+        ]
+    },
+    {
+        question: "Which of the following is the benefit of recycling used cooking oil?",
+        answers: [
+            { text: "It creates biodiesel, which is a renewable energy source", correct: true },
+            { text: "It makes the oil reusable for frying", correct: false },
+            { text: "It improves the taste of food", correct: false },
+            { text: "It helps in the production of plastic", correct: false },
+        ]
+    }
+];
+
+
+        // DOM elements
+        const questionElement = document.getElementById("question");
+        const answerButtons = document.getElementById("answer-buttons");
+        const nextButton = document.getElementById("next-btn");
+        const scoreElement = document.getElementById("score");
+        const exitButton = document.getElementById("exit-btn");
+        const userInfo = document.getElementById('user-info');
+        const userName = document.getElementById('user-name');
+        const userPoints = document.getElementById('user-points');
+        const loginMessage = document.getElementById('login-message');
+        const dailyLimitMessage = document.getElementById('daily-limit-message');
+        const signUpBtn = document.getElementById('signUpBtn');
+        const logInBtn = document.getElementById('logInBtn');
+        const logOutBtn = document.getElementById('logOutBtn');
+
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let pointsAwarded = false;
+
+        // Auth State Listener
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                currentUser = user;
+                console.log("User logged in:", user.email);
+                
+                // Update UI for logged in user
+                signUpBtn.style.display = 'none';
+                logInBtn.style.display = 'none';
+                logOutBtn.style.display = 'block';
+
+                try {
+                    // Get user data from Firestore
+                    const userDoc = await getDoc(doc(db, "users", user.uid));
+                    if (userDoc.exists()) {
+                        currentUserData = userDoc.data();
+                        updateUserDisplay();
+                        
+                        // Check if user already earned points today
+                        await checkDailyQuizLimit();
+                        updateQuizUI();
+                    }
+                } catch (error) {
+                    console.error("Error getting user data:", error);
+                }
+            } else {
+                // User signed out
+                currentUser = null;
+                currentUserData = null;
+                signUpBtn.style.display = 'block';
+                logInBtn.style.display = 'block';
+                logOutBtn.style.display = 'none';
+                updateQuizUI();
+            }
+            
+            // Start quiz after auth check
+            startQuiz();
+        });
+
+        // Check daily quiz limit
+        async function checkDailyQuizLimit() {
+            if (!currentUserData) return;
+            
+            const today = new Date().toDateString();
+            const lastQuizDate = currentUserData.lastQuizDate;
+            
+            if (lastQuizDate === today) {
+                alreadyEarnedPointsToday = true;
+            } else {
+                alreadyEarnedPointsToday = false;
+            }
+        }
+
+        // Award points function
+        async function awardQuizPoints(score) {
+            if (!currentUser) {
+                alert('Please log in to earn points!');
+                return false;
+            }
+
+            if (alreadyEarnedPointsToday) {
+                alert('You have already earned points today. Come back tomorrow!');
+                return false;
+            }
+
+            try {
+                const today = new Date().toDateString();
+                
+                // Update user document
+                await updateDoc(doc(db, "users", currentUser.uid), {
+                    points: increment(1),
+                    lastQuizDate: today,
+                    quizHistory: arrayUnion({
+                        date: new Date(),
+                        score: score,
+                        totalQuestions: questions.length,
+                        pointsEarned: 1
+                    }),
+                    totalQuizzesCompleted: increment(1)
+                });
+
+                // Update local data
+                currentUserData.points = (currentUserData.points || 0) + 1;
+                alreadyEarnedPointsToday = true;
+                
+                return true;
+            } catch (error) {
+                console.error("Error awarding points:", error);
+                alert('Error awarding points: ' + error.message);
+                return false;
+            }
+        }
+
+        // Update user display
+        function updateUserDisplay() {
+            if (currentUserData) {
+                userName.textContent = currentUserData.name || currentUser.email;
+                userPoints.textContent = (currentUserData.points || 0) + ' points';
+            }
+        }
+
+        // Update quiz UI
+        function updateQuizUI() {
+            if (!currentUser) {
+                loginMessage.style.display = 'block';
+                dailyLimitMessage.style.display = 'none';
+                userInfo.style.display = 'none';
+            } else {
+                loginMessage.style.display = 'none';
+                userInfo.style.display = 'block';
+                
+                if (alreadyEarnedPointsToday) {
+                    dailyLimitMessage.style.display = 'block';
+                } else {
+                    dailyLimitMessage.style.display = 'none';
+                }
+                
+                // Update user info in quiz
+                userName.textContent = currentUserData?.name || currentUser.email;
+                userPoints.textContent = currentUserData?.points || 0;
+            }
+        }
+
+        // Quiz functions
+        function startQuiz() {
+            currentQuestionIndex = 0;
+            score = 0;
+            pointsAwarded = false;
+            scoreElement.innerText = "";
+            nextButton.style.display = "none";
+            exitButton.style.display = "none";
+            showQuestion();
+        }
+
+        function showQuestion() {
+            resetState();
+            const currentQuestion = questions[currentQuestionIndex];
+            questionElement.innerText = currentQuestion.question;
+
+            currentQuestion.answers.forEach(answer => {
+                const button = document.createElement("button");
+                button.innerText = answer.text;
+                button.classList.add("btn");
+                if (answer.correct) {
+                    button.dataset.correct = answer.correct;
+                }
+                button.addEventListener("click", selectAnswer);
+                answerButtons.appendChild(button);
+            });
+        }
+
+        function resetState() {
+            nextButton.style.display = "none";
+            while (answerButtons.firstChild) {
+                answerButtons.removeChild(answerButtons.firstChild);
+            }
+        }
+
+        function selectAnswer(e) {
+            const selectedBtn = e.target;
+            const isCorrect = selectedBtn.dataset.correct === "true";
+            if (isCorrect) {
+                selectedBtn.classList.add("correct");
+                score++;
+            } else {
+                selectedBtn.classList.add("wrong");
+            }
+
+            Array.from(answerButtons.children).forEach(button => {
+                if (button.dataset.correct === "true") {
+                    button.classList.add("correct");
+                }
+                button.disabled = true;
+            });
+
+            nextButton.style.display = "block";
+        }
+
+        async function showScore() {
+            resetState();
+            questionElement.innerText = `Quiz Finished! You scored ${score}/${questions.length}`;
+            nextButton.style.display = "none";
+            
+            // Award points if eligible
+            if (currentUser && !pointsAwarded && !alreadyEarnedPointsToday) {
+                const success = await awardQuizPoints(score);
+                if (success) {
+                    scoreElement.innerHTML = `<div class="info-message points-earned">🎉 +1 Point Earned! Total: ${currentUserData.points} points</div>`;
+                    pointsAwarded = true;
+                    updateUserDisplay();
+                }
+            }
+
+            exitButton.style.display = "block";
+        }
+
+        function handleNextButton() {
+            currentQuestionIndex++;
+            if (currentQuestionIndex < questions.length) {
+                showQuestion();
+            } else {
+                showScore();
+            }
+        }
+
+        // Event listeners
+        nextButton.addEventListener("click", handleNextButton);
+        
+        exitButton.addEventListener("click", function() {
+            window.location.href = "menu.html";
+        });
+
+        logOutBtn.addEventListener("click", async () => {
+            try {
+                await signOut(auth);
+            } catch (error) {
+                console.error("Error signing out:", error);
+            }
+        });
+
+        // Start the quiz
+        startQuiz();
+    </script>
+</body>
+</html>

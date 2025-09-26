@@ -1,0 +1,1449 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Station Data Form</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css">
+  <style>
+    /* CSS styles remain the same as your original code */
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,300;0,400;1,600&display=swap');
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  body {
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    background-color: white;
+    text-align: center;
+    width: 100%;
+    margin: 0 auto;
+    background-image: url(Web\ \(43\).svg);
+  }
+
+nav {
+  width: 100%;
+  background: url('Web\ \(21\).svg');
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 15px 5%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1000;
+  transition: top 0.3s ease;
+}
+
+  .nav-logo {
+    display: flex;
+    align-items: center;
+  }
+
+  .logo {
+    width: 100px;
+    height: auto;
+    margin-right: 20px;
+  }
+
+  nav ul {
+    list-style: none;
+    display: flex;
+    gap: 1.5em;
+    align-items: center;
+  }
+
+  nav ul li {
+    position: relative;
+  }
+
+  nav ul li a {
+    color: black;
+    text-decoration: none;
+    font-weight: bold;
+    font-family: 'Poppins', sans-serif;
+    padding: 8px 12px;
+    display: block;
+    transition: all 0.3s ease;
+    font-size: 0.9em;
+  }
+
+nav ul li > a:hover {
+  background: linear-gradient(45deg, #8a2be2, #9400d3);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* hamburger button */
+    .hamburger {
+      display: none;
+      flex-direction: column;
+      cursor: pointer;
+    }
+
+    .hamburger div {
+      width: 25px;
+      height: 3px;
+      background: black;
+      margin: 4px;
+      transition: 0.3s;
+    }
+
+    /* responsive */
+    @media (max-width: 768px) {
+      .nav-links {
+        display: none;
+        position: absolute;
+        top: 60px;
+        right: 20px;
+        background: white;
+        flex-direction: column;
+        padding: 10px;
+        border: 1px solid #ddd;
+      }
+
+      .nav-links.active {
+        display: flex;
+      }
+
+      .hamburger {
+        display: flex;
+      }
+    }
+
+    #userRole {
+  background: rgba(0, 174, 140, 0.2);
+  color: #9B4DCA;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 1em;
+  font-weight: bold;
+  text-align: center;
+  display: inline-block;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+    .form-container {
+      padding: 40px 20px;
+      max-width: 800px;
+      margin: 20px auto;
+      background: #fff;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      border-radius: 8px;
+      color: #333;
+      padding-top: 120px;
+    }
+
+    h1 {
+      font-size: 2.5em;
+      margin-bottom: 20px;
+      color: #333;
+    }
+
+    h2 {
+      font-size: 2em;
+      margin-bottom: 20px;
+      color: #00AE8C;
+      text-align: left;
+      border-bottom: 2px solid #00AE8C;
+      padding-bottom: 10px;
+    }
+
+    label {
+      font-size: 1em;
+      margin-bottom: 8px;
+      color: #333;
+      display: block;
+      text-align: left;
+    }
+
+    input,
+    select,
+    textarea {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 1em;
+      background-color: #f9f9f9;
+      transition: border 0.3s ease;
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+      border-color: #00AE8C;
+      outline: none;
+    }
+
+    .btn {
+      padding: 14px 30px;
+      background-color: #00AE8C;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 1.2em;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      margin: 10px 5px;
+    }
+
+    .btn:hover {
+      background-color: #008c6f;
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(0, 174, 140, 0.3);
+    }
+
+    .btn-delete {
+      background-color: #e74c3c;
+      padding: 8px 15px;
+      font-size: 0.9em;
+    }
+
+    .btn-delete:hover {
+      background-color: #c0392b;
+    }
+
+    .btn-secondary {
+      background-color: #6c757d;
+    }
+
+    .btn-secondary:hover {
+      background-color: #5a6268;
+    }
+
+    #thank-you-message {
+      padding: 40px 20px;
+      background-color: #fff;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      border-radius: 8px;
+      display: none;
+      max-width: 800px;
+      margin: 20px auto;
+      color: #333;
+    }
+
+    #thank-you-message h2 {
+      color: #00AE8C;
+      text-align: center;
+      border: none;
+    }
+
+    #sustainability-fact {
+      font-size: 1.2em;
+      color: #333;
+      margin-top: 20px;
+      font-style: italic;
+    }
+
+    .error-message {
+      color: red;
+      margin-top: 10px;
+      display: none;
+    }
+
+    .success-message {
+      color: #00AE8C;
+      margin-top: 10px;
+      display: none;
+    }
+
+    .event-list {
+      margin-top: 30px;
+      text-align: left;
+    }
+
+    .event-item {
+      background: #f9f9f9;
+      border-left: 4px solid #00AE8C;
+      padding: 15px;
+      margin-bottom: 15px;
+      border-radius: 4px;
+      position: relative;
+    }
+
+    .event-item h3 {
+      color: #00AE8C;
+      margin-bottom: 5px;
+    }
+
+    .event-details {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .event-detail {
+      font-size: 0.9em;
+      color: #666;
+    }
+
+    .event-detail strong {
+      color: #333;
+    }
+
+    .event-actions {
+      margin-top: 15px;
+      text-align: right;
+    }
+
+    .admin-collector-section {
+      display: none;
+      margin-bottom: 40px;
+    }
+
+    .donation-section {
+      margin-top: 40px;
+    }
+
+    /* Modal styles for delete confirmation */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1001;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+    }
+
+    .modal-content {
+      background-color: #fff;
+      margin: 15% auto;
+      padding: 20px;
+      border-radius: 8px;
+      width: 80%;
+      max-width: 500px;
+      color: #333;
+    }
+
+    .modal-buttons {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    /* New styles for user info display */
+    .user-info {
+      background-color: #f0f8f5;
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      border-left: 4px solid #00AE8C;
+    }
+
+    .user-info p {
+      text-align: left;
+      margin: 5px 0;
+      color: #333;
+    }
+
+    .login-prompt {
+      text-align: center;
+      padding: 20px;
+      background-color: #fff8e1;
+      border-radius: 8px;
+      margin-bottom: 20px;
+    }
+
+    .login-prompt a {
+      color: #00AE8C;
+      font-weight: bold;
+      text-decoration: none;
+    }
+
+    .login-prompt a:hover {
+      text-decoration: underline;
+    }
+
+    /* Points display styles */
+    .points-display {
+      background-color: #e8f5e9;
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      border-left: 4px solid #4caf50;
+    }
+
+    .points-display p {
+      text-align: left;
+      margin: 5px 0;
+      color: #333;
+    }
+
+    .points-value {
+      font-size: 1.5em;
+      font-weight: bold;
+      color: #00AE8C;
+    }
+
+    .points-info {
+      font-size: 0.9em;
+      color: #666;
+    }
+
+    /* Hidden fields for auto-filled data */
+    .auto-filled-field {
+      display: none;
+    }
+
+    /* Event info display styles */
+    .event-info-display {
+      background-color: #f0f8f5;
+      padding: 20px;
+      border-radius: 8px;
+      margin: 20px 0;
+      border-left: 4px solid #00AE8C;
+      display: none;
+    }
+
+    .event-info-display h3 {
+      color: #00AE8C;
+      margin-bottom: 15px;
+      text-align: center;
+    }
+
+    .event-details-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+      margin-top: 10px;
+    }
+
+    .event-detail-item {
+      background: white;
+      padding: 12px;
+      border-radius: 6px;
+      border: 1px solid #e0e0e0;
+    }
+
+    .event-detail-item strong {
+      color: #00AE8C;
+      display: block;
+      margin-bottom: 5px;
+    }
+
+    /* Time badge */
+    .time-badge {
+      background-color: #00AE8C;
+      color: white;
+      padding: 5px 10px;
+      border-radius: 15px;
+      font-size: 0.9em;
+      font-weight: bold;
+      display: inline-block;
+      margin-top: 5px;
+    }
+  </style>
+</head>
+
+<body>
+  <nav>
+    <a href="menu.html" class="logo-link">
+        <img src="Web (44).svg" alt="Logo" class="logo" />
+    </a>
+
+    <ul class="nav-links">
+        <li><a href="Letsdonate.html">LET'S DONATE</a></li>
+        <li><a href="leaderboards.html">LEADERBOARDS</a></li>
+        <li><a href="chart.html">CHARTS</a></li>
+        <li><a href="forum.html">FORUM</a></li>
+        <li><a href="ContactUs.html">CONTACT US</a></li>
+        <li><a href="AboutUs.html">ABOUT US</a></li>
+        <li><a href="quiz chemistry.html">QUIZ</a></li>
+        <li><a href="user.html">USER</a></li>
+        <li><a href="signup.html" id="signUpBtn">SIGN UP</a></li>
+        <li><a href="login.html" id="logInBtn">LOG IN</a></li>
+        <li><a href="javascript:void(0)" id="logOutBtn" style="display: none;">LOG OUT</a></li>
+        <li id="userRole" style="display: none; font-family: 'Poppins', sans-serif;"></li>
+    </ul>
+
+    <div class="hamburger">
+      <div></div>
+      <div></div>
+      <div></div>
+    </div>
+  </nav>
+
+  <!-- Delete Confirmation Modal -->
+  <div id="deleteModal" class="modal">
+    <div class="modal-content">
+      <h3>Delete Event</h3>
+      <p>Are you sure you want to delete this event? This action cannot be undone.</p>
+      <div class="modal-buttons">
+        <button id="cancelDelete" class="btn btn-secondary">Cancel</button>
+        <button id="confirmDelete" class="btn btn-delete">Delete</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Admin/Collector Section - Create Events -->
+  <div class="form-container admin-collector-section" id="eventCreationSection">
+    <h2>Create New Event</h2>
+    <form id="event-form">
+      <label for="eventName">Event Name:</label>
+      <input type="text" id="eventName" name="eventName" required placeholder="Enter event name">
+
+      <label for="eventDate">Event Date:</label>
+      <input type="date" id="eventDate" name="eventDate" required>
+
+      <label for="eventTime">Event Time:</label>
+      <input type="time" id="eventTime" name="eventTime" required>
+
+      <label for="eventVenue">Event Venue:</label>
+      <input type="text" id="eventVenue" name="eventVenue" required placeholder="Enter venue address">
+
+      <label for="eventState">State:</label>
+      <select id="eventState" name="eventState" required>
+        <option value="Johor">Johor</option>
+        <option value="Kedah">Kedah</option>
+        <option value="Kelantan">Kelantan</option>
+        <option value="Melaka">Melaka</option>
+        <option value="Negeri Sembilan">Negeri Sembilan</option>
+        <option value="Pahang">Pahang</option>
+        <option value="Perak">Perak</option>
+        <option value="Perlis">Perlis</option>
+        <option value="Pulau Pinang">Pulau Pinang</option>
+        <option value="Sabah">Sabah</option>
+        <option value="Sarawak">Sarawak</option>
+        <option value="Selangor">Selangor</option>
+        <option value="Terengganu">Terengganu</option>
+        <option value="Wilayah Persekutuan Kuala Lumpur">Wilayah Persekutuan Kuala Lumpur</option>
+        <option value="Wilayah Persekutuan Labuan">Wilayah Persekutuan Labuan</option>
+        <option value="Wilayah Persekutuan Putrajaya">Wilayah Persekutuan Putrajaya</option>
+      </select>
+
+      <!-- TAMBAHAN: Station Type untuk Event -->
+      <label for="eventStation">Station Type:</label>
+      <select id="eventStation" name="eventStation" required>
+        <option value="">Select Station</option>
+        <option value="Petronas">Petronas</option>
+        <option value="Shell">Shell</option>
+        <option value="Petron">Petron</option>
+        <option value="BHPetrol">BHPetrol</option>
+      </select>
+
+      <label for="eventDescription">Event Description:</label>
+      <textarea id="eventDescription" name="eventDescription" rows="4" placeholder="Describe your event"></textarea>
+
+      <button type="submit" class="btn">Create Event</button>
+      <div id="event-message" class="success-message"></div>
+    </form>
+
+    <!-- Event List for Admin/Collector -->
+    <div class="event-list" id="eventList">
+      <h2>Your Events</h2>
+      <div id="events-container"></div>
+    </div>
+  </div>
+
+  <!-- Donation Section - For All Users -->
+  <div class="form-container donation-section">
+    <h2>Make a Donation</h2>
+    
+    <!-- Points Display for Logged-in Users -->
+    <div id="pointsDisplay" class="points-display" style="display: none;">
+      <p><strong>Your Current Points:</strong> <span id="displayUserPoints" class="points-value">0</span></p>
+      <p class="points-info">You earn 1 point for every 1 kg of cooking oil donated!</p>
+    </div>
+    
+    <!-- User Info Display for Logged-in Users -->
+    <div id="userInfoDisplay" class="user-info" style="display: none;">
+      <p><strong>Donating as:</strong> <span id="displayUserName"></span></p>
+      <p><strong>Phone:</strong> <span id="displayUserPhone"></span></p>
+      <p><strong>Email:</strong> <span id="displayUserEmail"></span></p>
+    </div>
+    
+    <!-- Login Prompt for Non-Logged-in Users -->
+    <div id="loginPrompt" class="login-prompt" style="display: none;">
+      <p><strong>Please log in to make a donation</strong></p>
+      <p>Logging in allows you to earn points for your donations and track your donation history.</p>
+      <p><strong>Earn 1 point for every 1 kg of cooking oil donated!</strong></p>
+      <p><a href="login.html">Log in here</a> or <a href="signup.html">create an account</a></p>
+    </div>
+    
+    <form id="donation-form">
+      <!-- Name and Phone fields - only show if user is not logged in -->
+      <div id="nameFieldContainer">
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name" placeholder="Your full name">
+      </div>
+      
+      <div id="phoneFieldContainer">
+        <label for="phone">Phone Number:</label>
+        <input type="text" id="phone" name="phone" placeholder="Your phone number">
+      </div>
+
+      <label for="event">Select Event:</label>
+      <select id="event" name="event" required>
+        <option value="">-- Please select an event --</option>
+      </select>
+
+      <!-- Hidden fields that will be auto-filled based on event selection -->
+      <div class="auto-filled-field">
+        <label for="station">Station Type:</label>
+        <select id="station" name="station" required>
+          <option value="">Select Station</option>
+          <option value="Petronas">Petronas</option>
+          <option value="Shell">Shell</option>
+          <option value="Petron">Petron</option>
+          <option value="BHPetrol">BHPetrol</option>
+        </select>
+      </div>
+
+      <div class="auto-filled-field">
+        <label for="state">State:</label>
+        <select id="state" name="state" required>
+          <option value="">Select State</option>
+          <option value="Johor">Johor</option>
+          <option value="Kedah">Kedah</option>
+          <option value="Kelantan">Kelantan</option>
+          <option value="Melaka">Melaka</option>
+          <option value="Negeri Sembilan">Negeri Sembilan</option>
+          <option value="Pahang">Pahang</option>
+          <option value="Perak">Perak</option>
+          <option value="Perlis">Perlis</option>
+          <option value="Pulau Pinang">Pulau Pinang</option>
+          <option value="Sabah">Sabah</option>
+          <option value="Sarawak">Sarawak</option>
+          <option value="Selangor">Selangor</option>
+          <option value="Terengganu">Terengganu</option>
+          <option value="Wilayah Persekutuan Kuala Lumpur">Wilayah Persekutuan Kuala Lumpur</option>
+          <option value="Wilayah Persekutuan Labuan">Wilayah Persekutuan Labuan</option>
+          <option value="Wilayah Persekutuan Putrajaya">Wilayah Persekutuan Putrajaya</option>
+        </select>
+      </div>
+
+      <!-- Display auto-filled information with improved layout -->
+      <div id="eventInfoDisplay" class="event-info-display">
+        <h3>Selected Event Details</h3>
+        <div class="event-details-grid">
+          <div class="event-detail-item">
+            <strong>Event Name</strong>
+            <span id="displayEventName">-</span>
+          </div>
+          <div class="event-detail-item">
+            <strong>Station Type</strong>
+            <span id="displayEventStation">-</span>
+          </div>
+          <div class="event-detail-item">
+            <strong>State</strong>
+            <span id="displayEventState">-</span>
+          </div>
+          <div class="event-detail-item">
+            <strong>Venue</strong>
+            <span id="displayEventVenue">-</span>
+          </div>
+          <div class="event-detail-item">
+            <strong>Date</strong>
+            <span id="displayEventDate">-</span>
+          </div>
+          <div class="event-detail-item">
+            <strong>Time</strong>
+            <div class="time-badge" id="displayEventTime">-</div>
+          </div>
+        </div>
+      </div>
+
+      <label for="quantity">Quantity (kg):</label>
+      <input type="number" id="quantity" name="quantity" min="1" required placeholder="Enter quantity in kg">
+
+      <label for="total">Total Cashback (RM):</label>
+      <input type="text" id="total" name="total" disabled placeholder="Will be calculated automatically">
+
+      <!-- Points Earned Display -->
+      <div id="pointsEarnedContainer" style="display: none; margin: 15px 0; padding: 10px; background-color: #e8f5e9; border-radius: 8px;">
+        <p><strong>Points to be earned:</strong> <span id="pointsEarned">0</span> points</p>
+        <p style="font-size: 0.9em; color: #666;">(1 point per 1 kg donated)</p>
+      </div>
+
+      <button type="submit" class="btn" id="donationSubmitBtn">Submit Donation</button>
+    </form>
+    <div id="error-message" class="error-message"></div>
+  </div>
+
+  <!-- Thank You Message -->
+  <div id="thank-you-message">
+    <h2>Thank You!</h2>
+    <p>Your donation has been successfully submitted.</p>
+    <div id="pointsEarnedMessage" style="display: none;">
+      <p><strong>You've earned <span id="pointsEarnedValue">0</span> points!</strong></p>
+      <p>Your total points: <span id="totalPointsAfterDonation">0</span></p>
+    </div>
+    <p id="sustainability-fact"></p>
+    <button class="btn" id="back-to-form">Submit Another Donation</button>
+  </div>
+
+  <script type="module">
+    // Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyBdDwCslP5RGHi37xjFo89x8rY3kKbhUwQ",
+      authDomain: "semulight-db.firebaseapp.com",
+      projectId: "semulight-db",
+      storageBucket: "semulight-db.firebasestorage.app",
+      messagingSenderId: "693934626490",
+      appId: "1:693934626490:web:87c36c26026509f86f1483",
+      measurementId: "G-QFFLDWLW2L"
+    };
+
+    // Import Firebase modules
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js';
+    import { getAuth, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/9.22.1/firebase-auth.js';
+    import {
+      getFirestore,
+      doc,
+      getDoc,
+      collection,
+      addDoc,
+      getDocs,
+      deleteDoc,
+      updateDoc,
+      query,
+      where,
+      orderBy,
+      increment
+    } from 'https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js';
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    // DOM elements
+    const signUpBtn = document.getElementById('signUpBtn');
+    const logInBtn = document.getElementById('logInBtn');
+    const logOutBtn = document.getElementById('logOutBtn');
+    const userRole = document.getElementById('userRole');
+    const eventCreationSection = document.getElementById('eventCreationSection');
+    const eventSelect = document.getElementById('event');
+    const hamburger = document.querySelector(".hamburger");
+    const navLinks = document.querySelector(".nav-links");
+    const deleteModal = document.getElementById('deleteModal');
+    const cancelDelete = document.getElementById('cancelDelete');
+    const confirmDelete = document.getElementById('confirmDelete');
+    
+    // New elements for user info display
+    const userInfoDisplay = document.getElementById('userInfoDisplay');
+    const displayUserName = document.getElementById('displayUserName');
+    const displayUserPhone = document.getElementById('displayUserPhone');
+    const displayUserEmail = document.getElementById('displayUserEmail');
+    const loginPrompt = document.getElementById('loginPrompt');
+    const nameFieldContainer = document.getElementById('nameFieldContainer');
+    const phoneFieldContainer = document.getElementById('phoneFieldContainer');
+    const donationSubmitBtn = document.getElementById('donationSubmitBtn');
+    
+    // Points display elements
+    const pointsDisplay = document.getElementById('pointsDisplay');
+    const displayUserPoints = document.getElementById('displayUserPoints');
+    const pointsEarnedContainer = document.getElementById('pointsEarnedContainer');
+    const pointsEarned = document.getElementById('pointsEarned');
+    const pointsEarnedMessage = document.getElementById('pointsEarnedMessage');
+    const pointsEarnedValue = document.getElementById('pointsEarnedValue');
+    const totalPointsAfterDonation = document.getElementById('totalPointsAfterDonation');
+
+    // Event info display elements
+    const eventInfoDisplay = document.getElementById('eventInfoDisplay');
+    const displayEventName = document.getElementById('displayEventName');
+    const displayEventStation = document.getElementById('displayEventStation');
+    const displayEventState = document.getElementById('displayEventState');
+    const displayEventVenue = document.getElementById('displayEventVenue');
+    const displayEventDate = document.getElementById('displayEventDate');
+    const displayEventTime = document.getElementById('displayEventTime');
+
+    // Form elements for auto-fill
+    const stationSelect = document.getElementById('station');
+    const stateSelect = document.getElementById('state');
+
+    // Sustainability Facts
+    const sustainabilityFacts = [
+      "Recycling used cooking oil helps reduce environmental pollution and prevent water contamination.",
+      "Used cooking oil can be converted into biodiesel, a renewable energy source.",
+      "By recycling cooking oil, you can reduce your carbon footprint and help preserve natural resources.",
+      "Recycling waste oil creates new jobs in the renewable energy and waste management sectors.",
+      "Biodiesel made from used cooking oil produces fewer pollutants compared to traditional petroleum diesel."
+    ];
+
+    // Current user data
+    let currentUser = null;
+    let currentUserRole = null;
+    let currentUserData = null;
+    let currentUserPoints = 0;
+    let eventToDelete = null;
+
+    // Store events data for auto-fill
+    let eventsData = {};
+
+    // Navigation scroll behavior
+    let lastScrollTop = 0;
+    const nav = document.querySelector('nav');
+
+    window.addEventListener('scroll', function () {
+      let currentScroll = window.pageYOffset || document.documentElement.scrollTop;
+      if (currentScroll > lastScrollTop && currentScroll > 100) {
+        nav.style.top = '-100px';
+      } else {
+        nav.style.top = '0';
+      }
+      lastScrollTop = currentScroll <= 0 ? 0 : currentScroll;
+    });
+
+    // Hamburger menu functionality
+    hamburger.addEventListener("click", () => {
+      navLinks.classList.toggle("active");
+    });
+
+    // Modal functionality
+    cancelDelete.addEventListener('click', () => {
+      deleteModal.style.display = 'none';
+      eventToDelete = null;
+    });
+
+    // Check if user is logged in and get role
+    onAuthStateChanged(auth, async function (user) {
+      if (user) {
+        currentUser = user;
+
+        // User is signed in
+        signUpBtn.style.display = 'none';
+        logInBtn.style.display = 'none';
+        logOutBtn.style.display = 'inline-block';
+        userRole.style.display = 'inline-block';
+
+        // Get user data from Firestore
+        const userRef = doc(db, "users", user.uid);
+        try {
+          const docSnapshot = await getDoc(userRef);
+          if (docSnapshot.exists()) {
+            currentUserData = docSnapshot.data();
+            currentUserRole = currentUserData.role;
+            currentUserPoints = currentUserData.points || 0;
+            
+            // PERUBAHAN DI SINI: Menampilkan role tanpa kata "Role:"
+            userRole.textContent = currentUserRole.charAt(0).toUpperCase() + currentUserRole.slice(1);
+
+            // Update UI based on login status
+            updateDonationFormForLoggedInUser();
+
+            // Show/hide sections based on role
+            if (currentUserRole === 'admin' || currentUserRole === 'collector') {
+              eventCreationSection.style.display = 'block';
+              await loadEvents(); // Load events for admin/collector
+            } else {
+              eventCreationSection.style.display = 'none';
+            }
+
+            // Load events for donation form (for all users)
+            await loadEventsForDonation();
+          }
+        } catch (error) {
+          console.error("Error getting user document:", error);
+        }
+      } else {
+        // User is signed out
+        currentUser = null;
+        currentUserRole = null;
+        currentUserData = null;
+        currentUserPoints = 0;
+
+        signUpBtn.style.display = 'inline-block';
+        logInBtn.style.display = 'inline-block';
+        logOutBtn.style.display = 'none';
+        userRole.style.display = 'none';
+        eventCreationSection.style.display = 'none';
+
+        // Update UI for non-logged in user
+        updateDonationFormForNonLoggedInUser();
+
+        // Still load events for donation form (public events)
+        await loadEventsForDonation();
+      }
+    });
+
+    // Function to update donation form for logged-in users
+    function updateDonationFormForLoggedInUser() {
+      // Hide name and phone input fields
+      nameFieldContainer.style.display = 'none';
+      phoneFieldContainer.style.display = 'none';
+      
+      // Hide login prompt
+      loginPrompt.style.display = 'none';
+      
+      // Show user info display
+      userInfoDisplay.style.display = 'block';
+      
+      // Show points display
+      pointsDisplay.style.display = 'block';
+      
+      // Populate user info
+      displayUserName.textContent = currentUserData.name || 'Not provided';
+      displayUserPhone.textContent = currentUserData.phone || 'Not provided';
+      displayUserEmail.textContent = currentUser.email;
+      displayUserPoints.textContent = currentUserPoints;
+      
+      // Enable donation button
+      donationSubmitBtn.disabled = false;
+      donationSubmitBtn.textContent = 'Submit Donation';
+    }
+
+    // Function to update donation form for non-logged-in users
+    function updateDonationFormForNonLoggedInUser() {
+      // Show name and phone input fields
+      nameFieldContainer.style.display = 'block';
+      phoneFieldContainer.style.display = 'block';
+      
+      // Show login prompt
+      loginPrompt.style.display = 'block';
+      
+      // Hide user info display
+      userInfoDisplay.style.display = 'none';
+      
+      // Hide points display
+      pointsDisplay.style.display = 'none';
+      
+      // Make name and phone fields required for non-logged-in users
+      document.getElementById('name').required = true;
+      document.getElementById('phone').required = true;
+    }
+
+    // Calculate total cashback (RM3 per kg) and points to be earned
+    document.getElementById("quantity").addEventListener("input", function () {
+      const quantity = parseFloat(this.value);
+      if (!isNaN(quantity) && quantity > 0) {
+        const total = quantity * 3; // RM3 per kg
+        document.getElementById("total").value = "RM " + total.toFixed(2);
+        
+        // Calculate points to be earned (1 point per kg)
+        const points = Math.floor(quantity);
+        pointsEarned.textContent = points;
+        
+        // Show points earned container if user is logged in
+        if (currentUser) {
+          pointsEarnedContainer.style.display = 'block';
+        }
+      } else {
+        document.getElementById("total").value = "";
+        pointsEarned.textContent = "0";
+        pointsEarnedContainer.style.display = 'none';
+      }
+    });
+
+    // Log out functionality
+    logOutBtn.addEventListener('click', function () {
+      signOut(auth).then(() => {
+        window.location.href = "menu.html";
+      }).catch((error) => {
+        console.error("Error signing out:", error);
+      });
+    });
+
+    // Handle back to form button
+    document.getElementById('back-to-form').addEventListener('click', () => {
+      document.getElementById('thank-you-message').style.display = 'none';
+      document.querySelector('.donation-section').style.display = 'block';
+      pointsEarnedMessage.style.display = 'none';
+    });
+
+    // Load events for donation form (all users) - UPDATED: Only active events
+    async function loadEventsForDonation() {
+      try {
+        console.log("Loading events for donation...");
+
+        // Get only active events, ordered by date
+        const eventsQuery = query(
+          collection(db, "events"),
+          where("status", "==", "active"),
+          orderBy("date", "asc")
+        );
+
+        const querySnapshot = await getDocs(eventsQuery);
+        eventSelect.innerHTML = '<option value="">-- Please select an event --</option>';
+
+        if (querySnapshot.empty) {
+          eventSelect.innerHTML = '<option value="">No events available at the moment</option>';
+          console.log("No active events found in database");
+          return;
+        }
+
+        // Clear events data
+        eventsData = {};
+
+        querySnapshot.forEach((doc) => {
+          const event = doc.data();
+          console.log("Found active event:", event);
+
+          // Store event data for auto-fill
+          eventsData[doc.id] = event;
+
+          // Format date for display
+          const eventDate = new Date(event.date);
+          const formattedDate = eventDate.toLocaleDateString('en-MY', {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric'
+          });
+
+          // Format time for display
+          const formattedTime = formatTime(event.time);
+
+          const option = document.createElement('option');
+          option.value = doc.id;
+          option.textContent = `${event.name} - ${formattedDate} at ${formattedTime}, ${event.venue}, ${event.state}`;
+          eventSelect.appendChild(option);
+        });
+
+        console.log(`Loaded ${querySnapshot.size} active events for donation form`);
+
+      } catch (error) {
+        console.error("Error loading events for donation:", error);
+        eventSelect.innerHTML = '<option value="">Error loading events</option>';
+      }
+    }
+
+    // Function to format time in 12-hour format with AM/PM
+    function formatTime(timeString) {
+      if (!timeString) return '-';
+      
+      // Convert time string to Date object
+      const timeParts = timeString.split(':');
+      if (timeParts.length < 2) return timeString;
+      
+      let hours = parseInt(timeParts[0]);
+      const minutes = timeParts[1];
+      const ampm = hours >= 12 ? 'PM' : 'AM';
+      
+      hours = hours % 12;
+      hours = hours ? hours : 12; // the hour '0' should be '12'
+      
+      return `${hours}:${minutes} ${ampm}`;
+    }
+
+    // Event listener for event selection change
+    eventSelect.addEventListener('change', function() {
+      const selectedEventId = this.value;
+      
+      if (selectedEventId && eventsData[selectedEventId]) {
+        const selectedEvent = eventsData[selectedEventId];
+        
+        // Auto-fill station and state based on selected event
+        stationSelect.value = selectedEvent.station;
+        stateSelect.value = selectedEvent.state;
+        
+        // Display event information
+        displayEventName.textContent = selectedEvent.name;
+        displayEventStation.textContent = selectedEvent.station;
+        displayEventState.textContent = selectedEvent.state;
+        displayEventVenue.textContent = selectedEvent.venue;
+        
+        // Format date for display
+        const eventDate = new Date(selectedEvent.date);
+        const formattedDate = eventDate.toLocaleDateString('en-MY', {
+          day: '2-digit',
+          month: '2-digit',
+          year: 'numeric'
+        });
+        displayEventDate.textContent = formattedDate;
+        
+        // Format and display time
+        const formattedTime = formatTime(selectedEvent.time);
+        displayEventTime.textContent = formattedTime;
+        
+        // Show event info display
+        eventInfoDisplay.style.display = 'block';
+      } else {
+        // Reset if no event selected
+        stationSelect.value = '';
+        stateSelect.value = '';
+        eventInfoDisplay.style.display = 'none';
+      }
+    });
+
+    // Load events for admin/collector - UPDATED: Show all events including inactive
+    async function loadEvents() {
+      try {
+        console.log("Loading events for admin/collector...");
+        console.log("Current user UID:", currentUser?.uid);
+        console.log("Current user role:", currentUserRole);
+
+        // Get all events first (including inactive)
+        const eventsQuery = query(collection(db, "events"));
+        const querySnapshot = await getDocs(eventsQuery);
+        const eventsContainer = document.getElementById('events-container');
+        eventsContainer.innerHTML = '';
+
+        console.log(`Found ${querySnapshot.size} total events in database`);
+
+        if (querySnapshot.empty) {
+          eventsContainer.innerHTML = '<p>No events created yet.</p>';
+          console.log("No events found in database");
+          return;
+        }
+
+        let userEvents = [];
+        
+        // Filter events based on user role
+        querySnapshot.forEach((doc) => {
+          const event = doc.data();
+          event.id = doc.id; // Add document ID to event object
+          
+          // Admin can see all events
+          if (currentUserRole === 'admin') {
+            userEvents.push(event);
+          } 
+          // Collector can only see their own events
+          else if (currentUserRole === 'collector' && event.createdBy === currentUser.uid) {
+            userEvents.push(event);
+          }
+        });
+
+        console.log(`Filtered to ${userEvents.length} events for ${currentUserRole}`);
+
+        if (userEvents.length === 0) {
+          if (currentUserRole === 'collector') {
+            eventsContainer.innerHTML = '<p>You haven\'t created any events yet.</p>';
+          } else {
+            eventsContainer.innerHTML = '<p>No events available.</p>';
+          }
+          return;
+        }
+
+        // Sort events by date (newest first)
+        userEvents.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+        // Display events
+        userEvents.forEach((event) => {
+          console.log("Displaying event:", event);
+
+          // Format date for display
+          const eventDate = new Date(event.date);
+          const formattedDate = eventDate.toLocaleDateString('en-MY', {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric'
+          });
+
+          // Format time for display
+          const formattedTime = formatTime(event.time);
+
+          const eventItem = document.createElement('div');
+          eventItem.className = 'event-item';
+          
+          // Add different border color for inactive events
+          if (event.status === 'inactive') {
+            eventItem.style.borderLeftColor = '#999';
+            eventItem.style.opacity = '0.7';
+          }
+          
+          eventItem.innerHTML = `
+            <h3>${event.name} ${event.status === 'inactive' ? '<span style="color: #999; font-size: 0.8em;">(Inactive)</span>' : ''}</h3>
+            <div class="event-details">
+              <div class="event-detail"><strong>Date:</strong> ${formattedDate}</div>
+              <div class="event-detail"><strong>Time:</strong> ${formattedTime}</div>
+              <div class="event-detail"><strong>Venue:</strong> ${event.venue}</div>
+              <div class="event-detail"><strong>State:</strong> ${event.state}</div>
+              <div class="event-detail"><strong>Station:</strong> ${event.station || 'Not specified'}</div>
+            </div>
+            <p><strong>Description:</strong> ${event.description || 'No description provided.'}</p>
+            <p><strong>Status:</strong> ${event.status || 'active'}</p>
+            <p><strong>Created By:</strong> ${event.createdBy || 'Unknown'}</p>
+            <div class="event-actions">
+              ${event.status !== 'inactive' ? 
+                `<button class="btn btn-delete delete-event-btn" data-event-id="${event.id}">Deactivate Event</button>` : 
+                `<button class="btn" style="background-color: #6c757d;" disabled>Event Deactivated</button>`
+              }
+            </div>
+          `;
+          eventsContainer.appendChild(eventItem);
+        });
+
+        // Add event listeners to delete buttons (only for active events)
+        document.querySelectorAll('.delete-event-btn').forEach(button => {
+          button.addEventListener('click', function() {
+            const eventId = this.getAttribute('data-event-id');
+            showDeleteConfirmation(eventId);
+          });
+        });
+
+        console.log(`Displayed ${userEvents.length} events`);
+
+      } catch (error) {
+        console.error("Error loading events:", error);
+        const eventsContainer = document.getElementById('events-container');
+        eventsContainer.innerHTML = '<p>Error loading events. Please check console for details.</p>';
+      }
+    }
+
+    // Show delete confirmation modal - UPDATED: Changed to deactivate
+    function showDeleteConfirmation(eventId) {
+      eventToDelete = eventId;
+      // Update modal text to reflect deactivation instead of deletion
+      document.querySelector('.modal-content h3').textContent = 'Deactivate Event';
+      document.querySelector('.modal-content p').textContent = 'Are you sure you want to deactivate this event? It will be hidden from donation forms but preserved for analytics.';
+      document.getElementById('confirmDelete').textContent = 'Deactivate';
+      
+      deleteModal.style.display = 'block';
+    }
+
+    // Handle delete confirmation - UPDATED: Now deactivates instead of deleting
+    confirmDelete.addEventListener('click', async function() {
+      if (!eventToDelete) return;
+
+      try {
+        console.log("Deactivating event with ID:", eventToDelete);
+        
+        // Update event status to inactive instead of deleting
+        const eventRef = doc(db, "events", eventToDelete);
+        await updateDoc(eventRef, {
+          status: "inactive",
+          deactivatedAt: new Date(),
+          deactivatedBy: currentUser.uid
+        });
+        
+        console.log("Event deactivated successfully");
+        
+        // Hide modal
+        deleteModal.style.display = 'none';
+        eventToDelete = null;
+        
+        // Show success message
+        document.getElementById("event-message").textContent = "Event deactivated successfully! It will no longer appear in donation forms.";
+        document.getElementById("event-message").style.display = 'block';
+        document.getElementById("event-message").style.color = '#00AE8C';
+        
+        // Reload events
+        await loadEvents();
+        await loadEventsForDonation();
+        
+        // Hide success message after 3 seconds
+        setTimeout(() => {
+          document.getElementById("event-message").style.display = 'none';
+        }, 3000);
+        
+      } catch (error) {
+        console.error("Error deactivating event:", error);
+        document.getElementById("event-message").textContent = "Error deactivating event: " + error.message;
+        document.getElementById("event-message").style.display = 'block';
+        document.getElementById("event-message").style.color = 'red';
+      }
+    });
+
+    // Handle event creation form submission - UPDATED: Set status to active by default
+    document.getElementById("event-form").addEventListener("submit", async function (e) {
+      e.preventDefault();
+
+      if (!currentUser) {
+        alert("You must be logged in to create events.");
+        return;
+      }
+
+      const eventName = document.getElementById("eventName").value;
+      const eventDate = document.getElementById("eventDate").value;
+      const eventTime = document.getElementById("eventTime").value;
+      const eventVenue = document.getElementById("eventVenue").value;
+      const eventState = document.getElementById("eventState").value;
+      const eventStation = document.getElementById("eventStation").value; // TAMBAHAN: Station Type
+      const eventDescription = document.getElementById("eventDescription").value;
+
+      // Validate form
+      if (!eventName || !eventDate || !eventTime || !eventVenue || !eventState || !eventStation) {
+        document.getElementById("event-message").textContent = "Please fill in all required fields.";
+        document.getElementById("event-message").style.display = 'block';
+        document.getElementById("event-message").style.color = 'red';
+        return;
+      }
+
+      // Validate date is not in the past
+      const today = new Date().toISOString().split('T')[0];
+      if (eventDate < today) {
+        document.getElementById("event-message").textContent = "Event date cannot be in the past.";
+        document.getElementById("event-message").style.display = 'block';
+        document.getElementById("event-message").style.color = 'red';
+        return;
+      }
+
+      try {
+        console.log("Creating event with data:", {
+          name: eventName,
+          date: eventDate,
+          time: eventTime,
+          venue: eventVenue,
+          state: eventState,
+          station: eventStation, // TAMBAHAN: Station Type
+          description: eventDescription,
+          createdBy: currentUser.uid
+        });
+
+        // Create event object with proper data structure
+        const eventData = {
+          name: eventName,
+          date: eventDate,
+          time: eventTime,
+          venue: eventVenue,
+          state: eventState,
+          station: eventStation, // TAMBAHAN: Station Type
+          description: eventDescription,
+          createdBy: currentUser.uid,
+          createdAt: new Date(),
+          status: "active"  // Default to active
+        };
+
+        // Save to Firestore
+        const docRef = await addDoc(collection(db, "events"), eventData);
+        console.log("Event created with ID: ", docRef.id);
+
+        document.getElementById("event-message").textContent = "Event created successfully!";
+        document.getElementById("event-message").style.display = 'block';
+        document.getElementById("event-message").style.color = '#00AE8C';
+        document.getElementById("event-form").reset();
+
+        // Reload events for both collector and donation form
+        await loadEvents();
+        await loadEventsForDonation();
+
+        // Hide success message after 3 seconds
+        setTimeout(() => {
+          document.getElementById("event-message").style.display = 'none';
+        }, 3000);
+
+      } catch (error) {
+        console.error("Error creating event: ", error);
+        document.getElementById("event-message").textContent = "Error creating event: " + error.message;
+        document.getElementById("event-message").style.display = 'block';
+        document.getElementById("event-message").style.color = 'red';
+      }
+    });
+
+    // Handle donation form submission - UPDATED: Add points system
+    document.getElementById("donation-form").addEventListener("submit", async function (e) {
+      e.preventDefault();
+
+      let name, phone;
+      const eventId = document.getElementById("event").value;
+      const station = document.getElementById("station").value;
+      const state = document.getElementById("state").value;
+      const quantity = document.getElementById("quantity").value;
+      const total = document.getElementById("total").value;
+      const pointsEarned = Math.floor(parseFloat(quantity)); // 1 point per kg
+
+      // If user is logged in, use their data
+      if (currentUser && currentUserData) {
+        name = currentUserData.name;
+        phone = currentUserData.phone;
+        
+        // Validate that user has required data
+        if (!name || !phone) {
+          document.getElementById("error-message").textContent = "Your account is missing required information. Please update your profile.";
+          document.getElementById("error-message").style.display = 'block';
+          return;
+        }
+      } else {
+        // If user is not logged in, use form data
+        name = document.getElementById("name").value;
+        phone = document.getElementById("phone").value;
+        
+        // Validate form fields for non-logged-in users
+        if (!name || !phone) {
+          document.getElementById("error-message").textContent = "Please fill in all required fields.";
+          document.getElementById("error-message").style.display = 'block';
+          return;
+        }
+      }
+
+      if (!eventId || eventId === "") {
+        document.getElementById("error-message").textContent = "Please select an event.";
+        document.getElementById("error-message").style.display = 'block';
+        return;
+      }
+
+      // Validate other fields
+      if (!station || !state || !quantity) {
+        document.getElementById("error-message").textContent = "Please fill in all required fields.";
+        document.getElementById("error-message").style.display = 'block';
+        return;
+      }
+
+      try {
+        console.log("Submitting donation with data:", {
+          name: name,
+          phone: phone,
+          eventId: eventId,
+          station: station,
+          state: state,
+          quantity: quantity,
+          total: total,
+          pointsEarned: pointsEarned,
+          userId: currentUser ? currentUser.uid : null
+        });
+
+        // Save donation to Firestore
+        await addDoc(collection(db, "donations"), {
+          name: name,
+          phone: phone,
+          eventId: eventId,
+          station: station,
+          state: state,
+          quantity: parseFloat(quantity),
+          total: total,
+          pointsEarned: pointsEarned,
+          timestamp: new Date(),
+          userId: currentUser ? currentUser.uid : null
+        });
+
+        // If user is logged in, update their points
+        if (currentUser) {
+          try {
+            const userRef = doc(db, "users", currentUser.uid);
+            await updateDoc(userRef, {
+              points: increment(pointsEarned)
+            });
+            
+            // Update local points value
+            currentUserPoints += pointsEarned;
+            displayUserPoints.textContent = currentUserPoints;
+            
+            // Show points earned in thank you message
+            pointsEarnedMessage.style.display = 'block';
+            pointsEarnedValue.textContent = pointsEarned;
+            totalPointsAfterDonation.textContent = currentUserPoints;
+          } catch (error) {
+            console.error("Error updating user points:", error);
+          }
+        }
+
+        // Show thank-you message
+        document.getElementById('thank-you-message').style.display = "block";
+        document.querySelector('.donation-section').style.display = "none";
+
+        // Show a random sustainability fact
+        const randomFact = sustainabilityFacts[Math.floor(Math.random() * sustainabilityFacts.length)];
+        document.getElementById("sustainability-fact").innerText = randomFact;
+
+        // Reset the form
+        document.getElementById("donation-form").reset();
+        document.getElementById("total").value = "";
+        pointsEarnedContainer.style.display = 'none';
+        eventInfoDisplay.style.display = 'none';
+
+      } catch (error) {
+        console.error("Error saving donation: ", error);
+        document.getElementById("error-message").textContent = "Error saving donation: " + error.message;
+        document.getElementById("error-message").style.display = 'block';
+      }
+    });
+
+    // Set minimum date to today for event date
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById('eventDate').min = today;
+  </script>
+</body>
+
+</html>

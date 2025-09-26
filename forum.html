@@ -1,0 +1,1601 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Menambahkan CSP meta tag untuk mengizinkan sumber yang diperlukan -->
+    <meta http-equiv="Content-Security-Policy" content="
+        default-src 'self'; 
+        script-src 'self' 'unsafe-inline' https://www.gstatic.com; 
+        style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://fonts.googleapis.com; 
+        font-src 'self' https://fonts.gstatic.com; 
+        img-src 'self' data: https:;
+        connect-src 'self' https://semulight-db.firebaseio.com https://semulight-db.firebaseapp.com;
+    ">
+    <title>Forum Events</title>
+    <link rel="stylesheet" href="menu.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,300;0,400;1,600&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: white;
+            text-align: center;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        /* Navigation Styles */
+        nav {
+            width: 100%;
+            background: url('Web (21).svg');
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 15px 5%;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1000;
+            transition: top 0.3s ease;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            width: 100px;
+            height: auto;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 1.5em;
+            align-items: center;
+        }
+
+        .nav-links li {
+            position: relative;
+        }
+
+        .nav-links a {
+            color: black;
+            text-decoration: none;
+            font-weight: bold;
+            padding: 8px 12px;
+            display: block;
+            transition: all 0.3s ease;
+            font-size: 0.9em;
+        }
+
+        .nav-links a:hover {
+            background: linear-gradient(45deg, #8a2be2, #9400d3);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Hamburger menu */
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+        }
+
+        .hamburger div {
+            width: 25px;
+            height: 3px;
+            background: black;
+            margin: 4px;
+            transition: 0.3s;
+        }
+
+        /* Dummy container */
+        .dummycontainer {
+            background-color: white;
+            height: 100px;
+            width: 100%;
+        }
+
+        /* Forum Container */
+        .forum-container {
+            width: 100%;
+            min-height: 100vh;
+            background-image: url("Web (6).svg");
+            background-size: cover;
+            background-position: center;
+            padding: 120px 20px 60px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            color: white;
+            box-sizing: border-box;
+        }
+
+        .forum-title {
+            font-size: 4.5em;
+            font-weight: bold;
+            margin-bottom: 40px;
+            text-align: center;
+            width: 100%;
+            max-width: 1200px;
+            color: #00AE8C;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        /* User Status */
+        .user-status {
+            background: rgba(0, 174, 140, 0.2);
+            padding: 20px;
+            border-radius: 15px;
+            margin: 20px 0;
+            text-align: center;
+            border: 2px solid #00AE8C;
+            backdrop-filter: blur(10px);
+            width: 90%;
+            max-width: 600px;
+            display: none;
+            color: #00AE8C;
+        }
+
+        .points-display {
+            color: #00AE8C;
+            font-weight: bold;
+            font-size: 1.3em;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Admin Controls */
+        .admin-controls {
+            text-align: center;
+            margin: 30px 0;
+            padding: 20px;
+            background: white;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            width: 90%;
+            max-width: 800px;
+            display: none;
+        }
+
+        .admin-controls h2 {
+            color: #00AE8C;
+            margin-bottom: 20px;
+            font-size: 2em;
+        }
+
+        /* Button Styles */
+        .btn {
+            padding: 12px 25px;
+            background-color: #00AE8C;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            margin: 5px;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+
+        .btn:hover {
+            background-color: #008c6f;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .btn.create {
+            background-color: #00AE8C;
+        }
+
+        .btn.create:hover {
+            background-color: #2980b9;
+        }
+
+        .btn.delete {
+            background-color: #e74c3c;
+        }
+
+        .btn.delete:hover {
+            background-color: #c0392b;
+        }
+
+        .btn.cancel {
+            background-color: #95a5a6;
+        }
+
+        .btn.cancel:hover {
+            background-color: #7f8c8d;
+        }
+
+        /* Events Grid */
+        .events-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 30px;
+            margin-top: 30px;
+            width: 90%;
+            max-width: 1200px;
+            padding: 20px 0;
+        }
+
+        .event-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+            position: relative;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .event-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+        }
+
+        .event-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .event-badge {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            background: #e74c3c;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.8em;
+            font-weight: bold;
+            z-index: 2;
+        }
+
+        .event-badge.active {
+            background: #27ae60;
+        }
+
+        .event-badge.past {
+            background: #95a5a6;
+        }
+
+        .event-content {
+            padding: 25px;
+            color: white;
+        }
+
+        .event-title {
+            font-size: 1.4em;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #00AE8C;
+            line-height: 1.3;
+        }
+
+        .event-info {
+            margin: 10px 0;
+            font-size: 0.95em;
+            color: black;
+            line-height: 1.4;
+        }
+
+        .event-info strong {
+            color: #00AE8C;
+        }
+
+        .event-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 60px 40px;
+            color: #00AE8C;
+            font-style: italic;
+            font-size: 1.2em;
+            grid-column: 1 / -1;
+            background: white;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            background: linear-gradient(135deg, #1a3a5f 0%, #2c3e50 100%);
+            padding: 40px;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+            border: 2px solid #00AE8C;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+        }
+
+        .modal h2 {
+            color: #00AE8C;
+            margin-bottom: 25px;
+            text-align: center;
+            font-size: 2em;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: bold;
+            color: #00AE8C;
+            font-size: 1.1em;
+        }
+
+        .form-group input, 
+        .form-group textarea, 
+        .form-group select {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #34495e;
+            border-radius: 10px;
+            font-size: 1em;
+            box-sizing: border-box;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        .form-group input:focus, 
+        .form-group textarea:focus, 
+        .form-group select:focus {
+            border-color: #00AE8C;
+            outline: none;
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+
+        /* Footer */
+        .footer {
+            background-color: #00AE8C;
+            padding: 70px 0;
+            width: 100%;
+            text-align: left;
+        }
+
+        .footer-container {
+            max-width: 1200px; 
+            margin: 0 auto; 
+            padding: 0 15px;
+        }
+
+        .footer-row {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+        }
+
+        .footer-col {
+            width: 25%;
+            padding: 0 15px;
+            margin-bottom: 35px;
+            text-align: left;
+        }
+
+        .footer-col h4 {
+            font-size: 18px;
+            color: #ffffff;
+            text-transform: capitalize;
+            margin-bottom: 35px;
+            font-weight: 500;
+            position: relative;
+            padding-left: 0;
+            text-align: left;
+        }
+
+        .footer-col h4::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: -10px;
+            background-color: #9B4DCA;
+            height: 2px;
+            width: 50px;
+        }
+
+        .footer-col ul li:not(:last-child) {
+            margin-bottom: 10px;
+        }
+
+        .footer-col ul li a {
+            font-size: 16px;
+            color: white;
+            text-decoration: none;
+            font-weight: 300;
+            display: block;
+            transition: all 0.3s ease;
+            text-align: left;
+        }
+
+        .footer-col ul li a:hover {
+            color: #ffffff;
+            padding-left: 8px;
+        }
+
+        .footer-col .social-links a {
+            display: inline-block;
+            height: 40px;
+            width: 40px;
+            background-color: rgba(255, 255, 255, 0.2);
+            margin: 0 10px 10px 0;
+            text-align: center;
+            line-height: 40px;
+            border-radius: 50%;
+            color: #ffffff;
+            transition: all 0.5s ease;
+        }
+
+        .footer-col .social-links a:hover {
+            color: #24262b;
+            background-color: #ffffff;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .hamburger {
+                display: flex;
+            }
+
+            .nav-links {
+                display: none;
+                position: absolute;
+                top: 100%;
+                right: 20px;
+                background: white;
+                flex-direction: column;
+                padding: 10px;
+                border: 1px solid #ddd;
+                width: 200px;
+            }
+
+            .nav-links.active {
+                display: flex;
+            }
+
+            .forum-title {
+                font-size: 3em;
+                margin-bottom: 30px;
+            }
+            
+            .events-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+                width: 95%;
+            }
+            
+            .modal-content {
+                padding: 30px 20px;
+                margin: 20px;
+            }
+            
+            .form-actions {
+                flex-direction: column;
+            }
+            
+            .btn {
+                width: 100%;
+                margin: 5px 0;
+            }
+            
+            .event-actions {
+                flex-direction: column;
+            }
+            
+            .admin-controls, .user-status {
+                width: 95%;
+                margin: 15px 0;
+            }
+
+            .footer-col {
+                width: 50%;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .forum-title {
+                font-size: 2.5em;
+            }
+            
+            .event-content {
+                padding: 20px;
+            }
+            
+            .event-title {
+                font-size: 1.2em;
+            }
+            
+            .modal-content {
+                padding: 20px 15px;
+            }
+
+            .footer-col {
+                width: 100%;
+            }
+        }
+
+        /* Loading Animation */
+        @keyframes pulse {
+            0% { opacity: 0.6; }
+            50% { opacity: 1; }
+            100% { opacity: 0.6; }
+        }
+
+        .loading {
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+
+        /* Success States */
+        .success {
+            background-color: #27ae60 !important;
+        }
+
+        .success:hover {
+            background-color: #219653 !important;
+        }
+
+        /* Disabled States */
+        .disabled {
+            background-color: #7f8c8d !important;
+            cursor: not-allowed !important;
+            opacity: 0.7;
+        }
+
+        .disabled:hover {
+            transform: none !important;
+            box-shadow: none !important;
+        }
+
+        .sliderbody {
+            min-height: 300px;
+            display: grid;
+            place-items: center;
+            background: linear-gradient(to bottom, #00AE8C, #9B4DCA);
+        }
+
+        .sliderbody2 {
+            min-height: 300px;
+            display: grid;
+            place-items: center;
+            background: linear-gradient(to bottom, #9B4DCA);
+        }
+
+        .slider {
+            height: 300px;
+            width: fit-content; 
+            margin: auto;
+            position: relative;
+            display: grid;
+            place-items: center;
+            overflow: hidden;
+        }
+
+        .slide-track {
+            display: flex;
+            width: calc(300px * 18); 
+            animation: scroll 40s linear infinite;
+        }
+
+        .slide-track:hover {
+            animation-play-state: paused;
+        }
+
+        @keyframes scroll {
+            0% {
+                transform: translateX(0);
+            }
+            100% {
+                transform: translateX(calc(-300px * 6));
+            }
+        }
+
+        .slide {
+            width: 300px;
+            height: 250px;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 5px;
+        }
+
+        .imgslide {
+            width: 100%;
+            height: 100%;
+            object-fit: cover; 
+            transition: transform 1s;
+        }
+
+        .imgslide:hover {
+            transform: scale(1.05);
+        }
+
+        .register1 {
+            width: 100%;
+            min-height: 100vh;
+            background-image: url("Web (6).svg");
+            background-size: cover;
+            background-position: center;
+            padding: 60px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            color: white;
+            box-sizing: border-box;
+        }
+
+        .register2 {
+            width: 100%;
+            min-height: 100vh;
+            background-image: url("Web (7).svg");
+            background-size: cover;
+            background-position: center;
+            padding: 60px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            color: white;
+            box-sizing: border-box;
+        }
+
+        .title1 {
+            font-size: 4.5em;
+            font-weight: bold;
+            margin-bottom: 40px;
+            text-align: left;
+            width: 900px;
+            color: #00AE8C;
+        }
+
+        .title2 {
+            font-size: 4.5em;
+            font-weight: bold;
+            margin-bottom: 40px;
+            text-align: right;
+            width: 900px;
+            color: #00AE8C;
+        }
+
+        .cards {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .card {
+            position: relative;
+            flex: 0 1 300px;
+            height: 350px;
+            overflow: hidden;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.4);
+            transition: transform 0.3s ease;
+        }
+
+        .card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .card:hover {
+            transform: scale(1.2);
+        }
+
+        .register-btn {
+            position: absolute;
+            bottom: 15px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: white;
+            color: black;
+            border: none;
+            padding: 10px 20px;
+            font-size: 1em;
+            border-radius: 20px;
+            cursor: pointer;
+            font-family: Arial, Helvetica, sans-serif;
+            font-weight: bold;
+        }
+
+        .register-btn:hover {
+            background-color: gold;
+        }
+
+        /* Popup Form */
+        .form-popup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 999;
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        .form-container {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .form-container input {
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .btn {
+            padding: 10px;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        .btn.cancel {
+            background-color: red;
+            color: white;
+        }
+
+        .btn:hover {
+            opacity: 0.8;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav>
+        <a href="menu.html" class="logo-link">
+            <img src="Web (44).svg" alt="Logo" class="logo" />
+        </a>
+
+        <ul class="nav-links">
+            <li><a href="Letsdonate.html">LET'S DONATE</a></li>
+            <li><a href="leaderboards.html">LEADERBOARDS</a></li>
+            <li><a href="chart.html">CHARTS</a></li>
+            <li><a href="forum.html">FORUM</a></li>
+            <li><a href="ContactUs.html">CONTACT US</a></li>
+            <li><a href="AboutUs.html">ABOUT US</a></li>
+            <li><a href="quiz chemistry.html">QUIZ</a></li>
+            <li><a href="user.html">USER</a></li>
+            <li><a href="signup.html" id="signUpBtn">SIGN UP</a></li>
+            <li><a href="login.html" id="logInBtn">LOG IN</a></li>
+            <!-- Mengubah href javascript:void(0) menjadi # untuk menghindari masalah CSP -->
+            <li><a href="#" id="logOutBtn" style="display: none;">LOG OUT</a></li>
+            <li id="userRole" style="display: none; font-family: 'Poppins', sans-serif;"></li>
+        </ul>
+
+        <div class="hamburger">
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+    </nav>
+
+    <!-- HEADER VIDEO -->
+    <div class="section-box">
+        <video autoplay muted loop width="100%">
+            <source src="education children.mp4" type="video/mp4">
+        </video>
+    </div>
+
+    <div class="dummycontainer"></div>
+
+    <div class="textbelowheader">
+        <h1 style="font-weight: bold; color: black;">Continuing Our Legacy Together</h1>
+        <h1 style="color: #00AE8C; font-weight: bold;">For Our Future</h1>
+        <br>
+        <p style="font-size: 18px ; padding-left: 50px; padding-right: 50px; font-family: 'Poppins', sans-serif; color: black;">"By recycling used cooking oil, we can turn waste into valuable resources, reduce environmental pollution, and contribute to a more sustainable future.Let's take action today and make a difference!</p>
+    </div>
+
+    <div class="collage-container">
+        <h2 class="collage-title" >Every piece is memorable</h2>
+        <section class="collage">
+            <div><img src="uco1.jpeg" alt=""></div>
+            <div><img src="uco6.webp" alt=""></div>
+            <div><img src="uco3.webp" alt=""></div>
+            <div aria-hidden="true"></div>
+            <div><img src="uco4.jpg" alt=""></div>
+            <div aria-hidden="true"></div>
+            <div><img src="uco5.jpeg" alt=""></div>
+            <div aria-hidden="true"></div>
+            <div aria-hidden="true"></div>
+            <div><img src="uco6.jpg" alt=""></div>
+        </section>
+    </div>
+
+    <!-- Main Content -->
+    <div class="forum-container">
+        <h1 class="forum-title">Forum Events</h1>
+        
+        <!-- User Status -->
+        <div id="userStatus" class="user-status">
+            Welcome, <span id="displayName"></span>! You have <span id="displayPoints" class="points-display">0</span> points.
+        </div>
+
+        <!-- Admin Controls -->
+        <div id="adminControls" class="admin-controls">
+            <h2>Admin Panel</h2>
+            <button class="btn create" id="createEventBtn">Create New Event</button>
+        </div>
+
+        <!-- Events Grid -->
+        <div id="eventsContainer" class="events-grid">
+            <div class="empty-state">Loading events...</div>
+        </div>
+    </div>
+
+    <!-- Create Event Modal -->
+    <div id="createEventModal" class="modal">
+        <div class="modal-content">
+            <h2>Create New Event</h2>
+            <form id="createEventForm">
+                <div class="form-group">
+                    <label for="eventTitle">Event Title</label>
+                    <input type="text" id="eventTitle" required placeholder="Enter event title">
+                </div>
+                <div class="form-group">
+                    <label for="eventDescription">Event Description</label>
+                    <textarea id="eventDescription" rows="3" required placeholder="Enter event description"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="eventDate">Event Date</label>
+                    <input type="date" id="eventDate" required>
+                </div>
+                <div class="form-group">
+                    <label for="eventTime">Event Time</label>
+                    <input type="time" id="eventTime" required>
+                </div>
+                <div class="form-group">
+                    <label for="eventVenue">Event Venue</label>
+                    <input type="text" id="eventVenue" required placeholder="Enter event venue">
+                </div>
+                <div class="form-group">
+                    <label for="eventCapacity">Event Capacity</label>
+                    <input type="number" id="eventCapacity" min="1" required placeholder="Enter maximum attendees">
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn">Create Event</button>
+                    <button type="button" class="btn cancel" id="cancelCreateEvent">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Event Details Modal -->
+    <div id="eventDetailsModal" class="modal">
+        <div class="modal-content">
+            <h2 id="modalEventTitle">Event Title</h2>
+            <div class="event-info">
+                <strong>Date:</strong> <span id="modalEventDate">Loading...</span>
+            </div>
+            <div class="event-info">
+                <strong>Time:</strong> <span id="modalEventTime">Loading...</span>
+            </div>
+            <div class="event-info">
+                <strong>Venue:</strong> <span id="modalEventVenue">Loading...</span>
+            </div>
+            <div class="event-info">
+                <strong>Description:</strong> <span id="modalEventDescription">Loading...</span>
+            </div>
+            <div class="event-info">
+                <strong>Available Spots:</strong> <span id="modalEventSpots">Loading...</span>
+            </div>
+            <div class="form-actions">
+                <button class="btn" id="modalRegisterBtn">Register for Event (+1 point)</button>
+                <button class="btn cancel" id="closeEventDetails">Close</button>
+                <button class="btn delete" id="modalDeleteBtn" style="display: none;">Delete Event</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="submit-container">
+        <h1>Your Support<br><span style="color: #9B4DCA;">Fuel Us</span></h1>
+        <button class="submit-btn" onclick="addMessage()">Submit your message</button>
+
+        <!-- Row 1 -->
+        <div class="row">
+            <div class="box blue">Message</div>
+            <div class="box green">Message</div>
+        </div>
+
+        <!-- Row 2 -->
+        <div class="row">
+            <div class="box red">Message</div>
+            <div class="box yellow">Message</div>
+            <div class="box orange">Message</div>
+        </div>
+    </div>
+
+    <script>
+        function addMessage() {
+            let msg = prompt("Enter your message:");
+            if (msg && msg.trim() !== "") {
+                let boxes = document.querySelectorAll(".box");
+                let randomBox = boxes[Math.floor(Math.random() * boxes.length)];
+                randomBox.textContent = msg;
+            }
+        }
+    </script>
+
+    <div class="sliderbody">
+        <div class="slider">
+            <div class="slide-track">
+                <div class="slide"><img class="imgslide" src="uco1.jpeg" alt="Slide 1"></div>
+                <div class="slide"><img class="imgslide" src="uco6.webp" alt="Slide 2"></div>
+                <div class="slide"><img class="imgslide" src="uco3.webp" alt="Slide 3"></div>
+                <div class="slide"><img class="imgslide" src="uco4.jpg" alt="Slide 4"></div>
+                <div class="slide"><img class="imgslide" src="uco5.jpeg" alt="Slide 5"></div>
+                <div class="slide"><img class="imgslide" src="uco6.jpg" alt="Slide 6"></div>
+
+                <div class="slide"><img class="imgslide" src="uco1.jpeg" alt="Slide 1"></div>
+                <div class="slide"><img class="imgslide" src="uco6.webp" alt="Slide 2"></div>
+                <div class="slide"><img class="imgslide" src="uco3.webp" alt="Slide 3"></div>
+                <div class="slide"><img class="imgslide" src="uco4.jpg" alt="Slide 4"></div>
+                <div class="slide"><img class="imgslide" src="uco5.jpeg" alt="Slide 5"></div>
+                <div class="slide"><img class="imgslide" src="uco6.jpg" alt="Slide 6"></div>
+                
+                <div class="slide"><img class="imgslide" src="uco1.jpeg" alt="Slide 1"></div>
+                <div class="slide"><img class="imgslide" src="uco6.webp" alt="Slide 2"></div>
+                <div class="slide"><img class="imgslide" src="uco3.webp" alt="Slide 3"></div>
+                <div class="slide"><img class="imgslide" src="uco4.jpg" alt="Slide 4"></div>
+                <div class="slide"><img class="imgslide" src="uco5.jpeg" alt="Slide 5"></div>
+                <div class="slide"><img class="imgslide" src="uco6.jpg" alt="Slide 6"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-row">
+                <div class="footer-col">
+                    <h4>Company</h4>
+                    <ul>
+                        <li><a href="AboutUs.html">About Us</a></li>
+                        <li><a href="forum.html">Forum</a></li>
+                        <li><a href="ContactUs.html">Contact Us</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-col">
+                    <h4>Let's Contribute</h4>
+                    <ul>
+                        <li><a href="Letsdonate.html">Let's Donate</a></li>
+                        <li><a href="leaderboards.html">Leaderboard</a></li>
+                        <li><a href="chart.html">Analytics</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-col">
+                    <h4>Others</h4>
+                    <ul>
+                        <li><a href="quiz chemistry.html">Quiz</a></li>
+                        <li><a href="user.html">User</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-col">
+                    <h4>follow us</h4>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Firebase and Forum Script -->
+    <script type="module">
+        // Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyBdDwCslP5RGHi37xjFo89x8rY3kKbhUwQ",
+            authDomain: "semulight-db.firebaseapp.com",
+            projectId: "semulight-db",
+            storageBucket: "semulight-db.firebasestorage.app",
+            messagingSenderId: "693934626490",
+            appId: "1:693934626490:web:87c36c26026509f86f1483",
+            measurementId: "G-QFFLDWLW2L"
+        };
+
+        // Import Firebase modules
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js';
+        import { 
+            getAuth, 
+            onAuthStateChanged, 
+            signOut 
+        } from 'https://www.gstatic.com/firebasejs/9.22.1/firebase-auth.js';
+        import { 
+            getFirestore, 
+            collection, 
+            addDoc, 
+            getDocs, 
+            query, 
+            where, 
+            updateDoc, 
+            doc, 
+            getDoc,
+            setDoc,
+            serverTimestamp 
+        } from 'https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js';
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        // Global variables
+        let currentUser = null;
+        let currentUserData = null;
+        let currentEventId = null;
+        let allEvents = [];
+
+        // DOM Elements
+        const signUpBtn = document.getElementById('signUpBtn');
+        const logInBtn = document.getElementById('logInBtn');
+        const logOutBtn = document.getElementById('logOutBtn');
+        const userRole = document.getElementById('userRole');
+        const userStatus = document.getElementById('userStatus');
+        const adminControls = document.getElementById('adminControls');
+        const createEventBtn = document.getElementById('createEventBtn');
+        const createEventForm = document.getElementById('createEventForm');
+        const cancelCreateEvent = document.getElementById('cancelCreateEvent');
+        const closeEventDetails = document.getElementById('closeEventDetails');
+        const modalRegisterBtn = document.getElementById('modalRegisterBtn');
+        const modalDeleteBtn = document.getElementById('modalDeleteBtn');
+
+        // Auth State Listener
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                currentUser = user;
+                console.log("User logged in:", user.email);
+                
+                // Update UI for logged in user
+                if (logInBtn) logInBtn.style.display = 'none';
+                if (signUpBtn) signUpBtn.style.display = 'none';
+                if (logOutBtn) logOutBtn.style.display = 'block';
+                if (userRole) userRole.style.display = 'block';
+                if (userStatus) userStatus.style.display = 'block';
+
+                try {
+                    // Get user data from Firestore
+                    const userDoc = await getDoc(doc(db, "users", user.uid));
+                    if (userDoc.exists()) {
+                        currentUserData = userDoc.data();
+                        updateUserDisplay();
+                        
+                        // Show admin controls if user is admin
+                        if (currentUserData.role === 'admin') {
+                            if (adminControls) adminControls.style.display = 'block';
+                            console.log("Admin user detected, showing admin controls");
+                        } else {
+                            console.log("User role:", currentUserData.role);
+                        }
+                    } else {
+                        // Create user document if doesn't exist
+                        await setDoc(doc(db, "users", user.uid), {
+                            name: user.email.split('@')[0],
+                            email: user.email,
+                            points: 0,
+                            role: 'customer',
+                            createdAt: serverTimestamp()
+                        });
+                        currentUserData = { points: 0, role: 'customer' };
+                        updateUserDisplay();
+                    }
+                } catch (error) {
+                    console.error("Error getting user data:", error);
+                }
+            } else {
+                // User signed out
+                currentUser = null;
+                currentUserData = null;
+                if (logInBtn) logInBtn.style.display = 'block';
+                if (signUpBtn) signUpBtn.style.display = 'block';
+                if (logOutBtn) logOutBtn.style.display = 'none';
+                if (userRole) userRole.style.display = 'none';
+                if (userStatus) userStatus.style.display = 'none';
+                if (adminControls) adminControls.style.display = 'none';
+            }
+            
+            // Load forum events
+            await loadForumEvents();
+        });
+
+        // Update user display information
+        function updateUserDisplay() {
+            if (currentUserData && currentUser) {
+                const displayName = document.getElementById('displayName');
+                const displayPoints = document.getElementById('displayPoints');
+                
+                if (displayName) displayName.textContent = currentUserData.name || currentUser.email;
+                if (displayPoints) displayPoints.textContent = currentUserData.points || 0;
+                if (userRole) userRole.textContent = `${currentUserData.role.charAt(0).toUpperCase() + currentUserData.role.slice(1)}`;
+            }
+        }
+
+        // Logout functionality - FIXED: Menambahkan event.preventDefault()
+        if (logOutBtn) {
+            logOutBtn.addEventListener('click', async (event) => {
+                event.preventDefault(); // Mencegah perilaku default link
+                try {
+                    await signOut(auth);
+                    console.log("User signed out successfully");
+                } catch (error) {
+                    console.error("Error signing out:", error);
+                }
+            });
+        }
+
+        // Load Forum Events
+        async function loadForumEvents() {
+            try {
+                const eventsContainer = document.getElementById('eventsContainer');
+                if (!eventsContainer) return;
+                
+                eventsContainer.innerHTML = '<div class="empty-state">Loading events...</div>';
+                
+                // Query all active events
+                const eventsQuery = query(
+                    collection(db, "forum_events"),
+                    where("status", "==", "active")
+                );
+                
+                const querySnapshot = await getDocs(eventsQuery);
+                
+                if (querySnapshot.empty) {
+                    eventsContainer.innerHTML = '<div class="empty-state">No events available. Check back later!</div>';
+                    allEvents = [];
+                    return;
+                }
+
+                allEvents = [];
+                querySnapshot.forEach(doc => {
+                    const event = doc.data();
+                    event.id = doc.id;
+                    allEvents.push(event);
+                });
+
+                // Sort events by date (soonest first)
+                allEvents.sort((a, b) => new Date(a.eventDate) - new Date(b.eventDate));
+
+                // Clear container
+                eventsContainer.innerHTML = '';
+
+                // Create event cards
+                allEvents.forEach(event => {
+                    createEventCard(event);
+                });
+
+            } catch (error) {
+                console.error("Error loading forum events:", error);
+                const eventsContainer = document.getElementById('eventsContainer');
+                if (eventsContainer) {
+                    eventsContainer.innerHTML = '<div class="empty-state">Error loading events. Please try again later.</div>';
+                }
+            }
+        }
+
+        // Create Event Card
+        function createEventCard(event) {
+            const eventsContainer = document.getElementById('eventsContainer');
+            if (!eventsContainer) return;
+            
+            const randomImage = `edu${Math.floor(Math.random() * 6) + 1}.jpg`;
+            const isAdmin = currentUserData && currentUserData.role === 'admin';
+            
+            const eventDate = new Date(event.eventDate);
+            const today = new Date();
+            const isPastEvent = eventDate < today;
+            
+            const eventCard = document.createElement('div');
+            eventCard.className = 'event-card';
+            eventCard.innerHTML = `
+                <img src="Web (33).svg" alt="${event.title}" class="event-image">
+                ${isPastEvent ? '<div class="event-badge past">PAST</div>' : '<div class="event-badge active">ACTIVE</div>'}
+                <div class="event-content">
+                    <div class="event-title">${event.title}</div>
+                    <div class="event-info"><strong>Date:</strong> ${eventDate.toLocaleDateString()}</div>
+                    <div class="event-info"><strong>Time:</strong> ${event.eventTime}</div>
+                    <div class="event-info"><strong>Venue:</strong> ${event.venue}</div>
+                    <div class="event-info"><strong>Capacity:</strong> ${event.capacity} attendees</div>
+                    <div class="event-actions">
+                        <button class="btn view-details-btn" data-event-id="${event.id}">
+                            ${isAdmin ? 'Manage Event' : 'View Details'}
+                        </button>
+                        ${isAdmin ? `
+                            <button class="btn delete delete-event-btn" data-event-id="${event.id}">
+                                Delete
+                            </button>
+                        ` : ''}
+                    </div>
+                </div>
+            `;
+
+            eventsContainer.appendChild(eventCard);
+            
+            // Add event listeners to buttons
+            const viewDetailsBtn = eventCard.querySelector('.view-details-btn');
+            if (viewDetailsBtn) {
+                viewDetailsBtn.addEventListener('click', function() {
+                    showEventDetails(this.getAttribute('data-event-id'));
+                });
+            }
+            
+            const deleteBtn = eventCard.querySelector('.delete-event-btn');
+            if (deleteBtn) {
+                deleteBtn.addEventListener('click', function() {
+                    deleteEventPrompt(this.getAttribute('data-event-id'));
+                });
+            }
+        }
+
+        // Show Event Details
+        async function showEventDetails(eventId) {
+            currentEventId = eventId;
+            
+            try {
+                const eventDoc = await getDoc(doc(db, "forum_events", eventId));
+                if (eventDoc.exists()) {
+                    const event = eventDoc.data();
+                    
+                    // Update modal with event details
+                    document.getElementById('modalEventTitle').textContent = event.title;
+                    document.getElementById('modalEventDate').textContent = new Date(event.eventDate).toLocaleDateString();
+                    document.getElementById('modalEventTime').textContent = event.eventTime;
+                    document.getElementById('modalEventVenue').textContent = event.venue;
+                    document.getElementById('modalEventDescription').textContent = event.description;
+                    
+                    // Check registrations count
+                    const registrationsQuery = query(
+                        collection(db, "forum_registrations"),
+                        where("eventId", "==", eventId)
+                    );
+                    const registrationsSnapshot = await getDocs(registrationsQuery);
+                    const registeredCount = registrationsSnapshot.size;
+                    const availableSpots = event.capacity - registeredCount;
+                    
+                    document.getElementById('modalEventSpots').textContent = `${availableSpots} / ${event.capacity}`;
+
+                    // Check if user is already registered
+                    let isRegistered = false;
+                    if (currentUser) {
+                        const registrationQuery = query(
+                            collection(db, "forum_registrations"),
+                            where("eventId", "==", eventId),
+                            where("userId", "==", currentUser.uid)
+                        );
+                        const registrationSnapshot = await getDocs(registrationQuery);
+                        isRegistered = !registrationSnapshot.empty;
+                    }
+
+                    // Update register button based on status
+                    const registerBtn = document.getElementById('modalRegisterBtn');
+                    const deleteBtn = document.getElementById('modalDeleteBtn');
+                    
+                    // Show delete button for admins
+                    if (currentUserData && currentUserData.role === 'admin') {
+                        deleteBtn.style.display = 'block';
+                    } else {
+                        deleteBtn.style.display = 'none';
+                    }
+
+                    const eventDate = new Date(event.eventDate);
+                    const today = new Date();
+                    const isPastEvent = eventDate < today;
+
+                    if (!currentUser) {
+                        registerBtn.textContent = 'Please Login to Register';
+                        registerBtn.disabled = true;
+                        registerBtn.className = 'btn disabled';
+                    } else if (isPastEvent) {
+                        registerBtn.textContent = 'Event Has Passed';
+                        registerBtn.disabled = true;
+                        registerBtn.className = 'btn disabled';
+                    } else if (isRegistered) {
+                        registerBtn.textContent = '✓ Already Registered (+1 point earned)';
+                        registerBtn.disabled = true;
+                        registerBtn.className = 'btn success';
+                    } else if (availableSpots <= 0) {
+                        registerBtn.textContent = 'Event Full';
+                        registerBtn.disabled = true;
+                        registerBtn.className = 'btn disabled';
+                    } else {
+                        registerBtn.textContent = 'Register for Event (+1 point)';
+                        registerBtn.disabled = false;
+                        registerBtn.className = 'btn';
+                    }
+
+                    // Show the modal
+                    document.getElementById('eventDetailsModal').style.display = 'flex';
+                }
+            } catch (error) {
+                console.error("Error loading event details:", error);
+                alert('Error loading event details. Please try again.');
+            }
+        }
+
+        // Register for Event
+        async function registerForEvent() {
+            if (!currentUser) {
+                alert('Please login to register for events');
+                return;
+            }
+
+            try {
+                // Check if already registered
+                const existingQuery = query(
+                    collection(db, "forum_registrations"),
+                    where("eventId", "==", currentEventId),
+                    where("userId", "==", currentUser.uid)
+                );
+                const existingSnapshot = await getDocs(existingQuery);
+                
+                if (!existingSnapshot.empty) {
+                    alert('You are already registered for this event');
+                    return;
+                }
+
+                // Create registration
+                await addDoc(collection(db, "forum_registrations"), {
+                    eventId: currentEventId,
+                    userId: currentUser.uid,
+                    userName: currentUserData.name || currentUser.email,
+                    userEmail: currentUser.email,
+                    registeredAt: serverTimestamp()
+                });
+
+                // Award 1 point to user
+                const newPoints = (currentUserData.points || 0) + 1;
+                await updateDoc(doc(db, "users", currentUser.uid), {
+                    points: newPoints
+                });
+
+                // Update UI
+                currentUserData.points = newPoints;
+                updateUserDisplay();
+
+                alert('Successfully registered for the event! 🎉 You earned 1 point.');
+                closeEventDetailsModal();
+                loadForumEvents();
+
+            } catch (error) {
+                console.error("Error registering for event:", error);
+                alert('Error registering for event. Please try again.');
+            }
+        }
+
+        // Show Create Event Form
+        function showCreateEventForm() {
+            if (!currentUserData || currentUserData.role !== 'admin') {
+                alert('Only admins can create events');
+                return;
+            }
+            
+            // Set minimum date to today
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('eventDate').min = today;
+            
+            document.getElementById('createEventModal').style.display = 'flex';
+        }
+
+        // Create Forum Event
+        async function createForumEvent(event) {
+            event.preventDefault();
+            
+            const title = document.getElementById('eventTitle').value;
+            const description = document.getElementById('eventDescription').value;
+            const date = document.getElementById('eventDate').value;
+            const time = document.getElementById('eventTime').value;
+            const venue = document.getElementById('eventVenue').value;
+            const capacity = document.getElementById('eventCapacity').value;
+
+            if (!title || !description || !date || !time || !venue || !capacity) {
+                alert('Please fill in all fields');
+                return;
+            }
+
+            // Validate date is not in the past
+            const today = new Date().toISOString().split('T')[0];
+            if (date < today) {
+                alert('Event date cannot be in the past');
+                return;
+            }
+
+            try {
+                await addDoc(collection(db, "forum_events"), {
+                    title: title,
+                    description: description,
+                    eventDate: date,
+                    eventTime: time,
+                    venue: venue,
+                    capacity: parseInt(capacity),
+                    createdBy: currentUser.uid,
+                    createdAt: serverTimestamp(),
+                    status: 'active'
+                });
+
+                alert('Forum event created successfully!');
+                closeCreateEventModal();
+                loadForumEvents();
+
+            } catch (error) {
+                console.error("Error creating event:", error);
+                alert('Error creating event: ' + error.message);
+            }
+        }
+
+        // Delete Event Prompt
+        function deleteEventPrompt(eventId) {
+            if (!currentUserData || currentUserData.role !== 'admin') {
+                alert('Only admins can delete events');
+                return;
+            }
+
+            if (confirm('Are you sure you want to delete this event? This action cannot be undone.')) {
+                deleteEvent(eventId);
+            }
+        }
+
+        // Delete Event
+        async function deleteEvent(eventId = null) {
+            if (!currentUserData || currentUserData.role !== 'admin') {
+                alert('Only admins can delete events');
+                return;
+            }
+
+            const eventToDelete = eventId || currentEventId;
+
+            try {
+                // Soft delete by updating status
+                await updateDoc(doc(db, "forum_events", eventToDelete), {
+                    status: "deleted",
+                    deletedAt: serverTimestamp(),
+                    deletedBy: currentUser.uid
+                });
+
+                alert('Event deleted successfully!');
+                closeEventDetailsModal();
+                loadForumEvents();
+
+            } catch (error) {
+                console.error("Error deleting event:", error);
+                alert('Error deleting event: ' + error.message);
+            }
+        }
+
+        // Close Modals
+        function closeCreateEventModal() {
+            document.getElementById('createEventModal').style.display = 'none';
+            document.getElementById('createEventForm').reset();
+        }
+
+        function closeEventDetailsModal() {
+            document.getElementById('eventDetailsModal').style.display = 'none';
+        }
+
+        // Event Listeners
+        if (createEventBtn) {
+            createEventBtn.addEventListener('click', showCreateEventForm);
+        }
+        
+        if (createEventForm) {
+            createEventForm.addEventListener('submit', createForumEvent);
+        }
+        
+        if (cancelCreateEvent) {
+            cancelCreateEvent.addEventListener('click', closeCreateEventModal);
+        }
+        
+        if (closeEventDetails) {
+            closeEventDetails.addEventListener('click', closeEventDetailsModal);
+        }
+        
+        if (modalRegisterBtn) {
+            modalRegisterBtn.addEventListener('click', registerForEvent);
+        }
+        
+        if (modalDeleteBtn) {
+            modalDeleteBtn.addEventListener('click', () => deleteEvent());
+        }
+
+        // Close modals when clicking outside
+        window.onclick = function(event) {
+            const createModal = document.getElementById('createEventModal');
+            const detailsModal = document.getElementById('eventDetailsModal');
+            
+            if (event.target === createModal) {
+                closeCreateEventModal();
+            }
+            if (event.target === detailsModal) {
+                closeEventDetailsModal();
+            }
+        };
+
+        // Hamburger menu functionality
+        const hamburger = document.querySelector('.hamburger');
+        if (hamburger) {
+            hamburger.addEventListener('click', () => {
+                const navLinks = document.querySelector('.nav-links');
+                if (navLinks) {
+                    navLinks.classList.toggle('active');
+                }
+            });
+        }
+
+        // Set minimum date for event creation to today
+        document.addEventListener('DOMContentLoaded', function() {
+            const today = new Date().toISOString().split('T')[0];
+            const dateInput = document.getElementById('eventDate');
+            if (dateInput) {
+                dateInput.min = today;
+            }
+        });
+    </script>
+</body>
+</html>

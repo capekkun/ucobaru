@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Us</title>
+    
+    <!-- CSP Meta Tag untuk mengizinkan sumber yang diperlukan -->
+    <meta http-equiv="Content-Security-Policy" content="
+        default-src 'self'; 
+        script-src 'self' https://www.gstatic.com; 
+        style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://fonts.googleapis.com; 
+        font-src 'self' https://cdnjs.cloudflare.com https://fonts.gstatic.com; 
+        connect-src 'self' https://semulight-db.firebaseio.com https://semulight-db.firebasestorage.app;
+        img-src 'self' data: https:;
+    ">
+    
+    <link rel="stylesheet" href="menu.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,300;0,400;1,600&display=swap');
+
+        /* Contact Form Section */
+        .contact-section {
+            margin-top: 100px;
+            padding: 40px 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: calc(100vh - 200px);
+        }
+
+        .contact-container {
+            display: flex;
+            max-width: 1000px;
+            width: 100%;
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .contact-info {
+            flex: 1;
+            background: linear-gradient(to bottom, #00AE8C, #9B4DCA);
+            color: white;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .contact-info h2 {
+            margin-bottom: 20px;
+            font-size: 28px;
+        }
+
+        .contact-info p {
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+
+        .contact-details {
+            margin-top: 20px;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .contact-item i {
+            margin-right: 15px;
+            font-size: 20px;
+        }
+
+        .contact-form {
+            flex: 1;
+            padding: 40px;
+        }
+
+        .contact-form h2 {
+            margin-bottom: 20px;
+            color: #333;
+            font-size: 28px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #555;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            transition: border 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            border-color: #3498db;
+            outline: none;
+            box-shadow: 0 0 5px rgba(52, 152, 219, 0.3);
+        }
+
+        .form-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 25px;
+        }
+
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 500;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+        }
+
+        .btn-submit {
+            background: #3498db;
+            color: white;
+            flex: 2;
+        }
+
+        .btn-submit:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+        }
+
+        .btn-back {
+            background: #95a5a6;
+            color: white;
+            flex: 1;
+        }
+
+        .btn-back:hover {
+            background: #7f8c8d;
+            transform: translateY(-2px);
+        }
+
+        .error {
+            color: #e74c3c;
+            font-size: 0.9em;
+            margin-top: 5px;
+            display: block;
+        }
+
+        .success {
+            color: #27ae60;
+            font-size: 1em;
+            margin-top: 15px;
+            text-align: center;
+            display: block;
+        }
+
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+            margin-right: 10px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Footer */
+       
+
+        /* Responsive */
+        @media (max-width: 992px) {
+            .contact-container {
+                flex-direction: column;
+            }
+            
+            .footer-col {
+                width: 50%;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+                position: absolute;
+                top: 60px;
+                right: 20px;
+                background: white;
+                flex-direction: column;
+                padding: 10px;
+                border: 1px solid #ddd;
+                box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+                border-radius: 5px;
+                width: 200px;
+            }
+
+            .nav-links.active {
+                display: flex;
+            }
+
+            .hamburger {
+                display: flex;
+            }
+            
+            .contact-section {
+                margin-top: 80px;
+                padding: 20px 0;
+            }
+            
+            .contact-info, .contact-form {
+                padding: 30px;
+            }
+            
+            .form-buttons {
+                flex-direction: column;
+            }
+        }
+
+        @media (max-width: 576px) {
+            #box2 {
+                padding: 0 10px;
+            }
+
+            .footer-col {
+                width: 100%;
+            }
+
+            .contact-info, .contact-form {
+                padding: 20px;
+            }
+            
+            .contact-section {
+                margin-top: 70px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="box2">
+        <div class="menu">
+ <nav>
+    <a href="menu.html" class="logo-link">
+        <img src="Web (44).svg" alt="Logo" class="logo" />
+    </a>
+
+    <ul class="nav-links">
+        <li><a href="Letsdonate.html">LET'S DONATE</a></li>
+        <li><a href="leaderboards.html">LEADERBOARDS</a></li>
+        <li><a href="chart.html">CHARTS</a></li>
+        <li><a href="forum.html">FORUM</a></li>
+        <li><a href="ContactUs.html">CONTACT US</a></li>
+        <li><a href="AboutUs.html">ABOUT US</a></li>
+        <li><a href="quiz chemistry.html">QUIZ</a></li>
+        <li><a href="user.html">USER</a></li>
+        <li><a href="signup.html" id="signUpBtn">SIGN UP</a></li>
+        <li><a href="login.html" id="logInBtn">LOG IN</a></li>
+        <li><a href="javascript:void(0)" id="logOutBtn" style="display: none;">LOG OUT</a></li>
+        <li id="userRole" style="display: none; font-family: 'Poppins', sans-serif;"></li>
+    </ul>
+
+    <div class="hamburger">
+      <div></div>
+      <div></div>
+      <div></div>
+    </div>
+  </nav>
+        </div>
+
+        <div class="contact-section">
+            <div class="contact-container">
+                <div class="contact-info">
+                    <h2>Get In Touch</h2>
+                    <p>We'd love to hear from you. Send us a message and we'll respond as soon as possible.</p>
+                    
+                    <div class="contact-details">
+                        <div class="contact-item">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span>123 Education Street, Learning City</span>
+                        </div>
+                        <div class="contact-item">
+                            <i class="fas fa-phone"></i>
+                            <span>+1 (555) 123-4567</span>
+                        </div>
+                        <div class="contact-item">
+                            <i class="fas fa-envelope"></i>
+                            <span>semulight@gmail.com</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="contact-form">
+                    <h2>Contact Us</h2>
+                    <form id="contactForm">
+                        <div class="form-group">
+                            <label for="name">Name:</label>
+                            <input type="text" id="name" name="name" placeholder="Your full name">
+                            <span class="error" id="nameError"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="email">Email:</label>
+                            <input type="email" id="email" name="email" placeholder="Your email address">
+                            <span class="error" id="emailError"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="phone">Phone Number:</label>
+                            <input type="tel" id="phone" name="phone" placeholder="Your phone number">
+                            <span class="error" id="phoneError"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="message">Message:</label>
+                            <textarea id="message" name="message" rows="4" placeholder="Your message"></textarea>
+                            <span class="error" id="messageError"></span>
+                        </div>
+
+                        <div class="form-buttons">
+                            <button type="submit" class="btn btn-submit" id="submitBtn">
+                                <span id="submitText">Send Message</span>
+                                <span id="submitLoading" class="loading" style="display: none;"></span>
+                            </button>
+                            <a href="AboutUs.html" class="btn btn-back">Back</a>
+                        </div>
+
+                        <span class="success" id="successMsg"></span>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <footer class="footer">
+  <div class="footer-container">
+    <div class="footer-row">
+      <div class="footer-col">
+        <h4>Company</h4>
+        <ul>
+          <li><a href="AboutUs.html">About Us</a></li>
+          <li><a href="forum.html">Forum</a></li>
+          <li><a href="ContactUs.html">Contact Us</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4>Let's Contribute</h4>
+        <ul>
+          <li><a href="Letsdonate.html">Let's Donate</a></li>
+          <li><a href="leaderboards.html">Leaderboard</a></li>
+          <li><a href="chart.html">Analytics</a></li>
+        </ul>
+      </div>
+      
+      <div class="footer-col">
+        <h4>Others</h4>
+        <ul>
+          <li><a href="quiz chemistry.html">Quiz</a></li>
+          <li><a href="user.html">User</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4>follow us</h4>
+        <div class="social-links">
+          <a href="#"><i class="fab fa-facebook-f"></i></a>
+          <a href="#"><i class="fab fa-twitter"></i></a>
+          <a href="#"><i class="fab fa-instagram"></i></a>
+          <a href="#"><i class="fab fa-linkedin-in"></i></a>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
+    </div>
+
+    <!-- Firebase SDK - menggunakan versi modular yang lebih aman -->
+    <script type="module">
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyBdDwCslP5RGHi37xjFo89x8rY3kKbhUwQ",
+            authDomain: "semulight-db.firebaseapp.com",
+            projectId: "semulight-db",
+            storageBucket: "semulight-db.firebasestorage.app",
+            messagingSenderId: "693934626490",
+            appId: "1:693934626490:web:87c36c26026509f86f1483",
+            measurementId: "G-QFFLDWLW2L"
+        };
+
+        // Initialize Firebase
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js';
+        import { 
+            getAuth, 
+            onAuthStateChanged, 
+            signOut 
+        } from 'https://www.gstatic.com/firebasejs/9.22.1/firebase-auth.js';
+        import { 
+            getFirestore, 
+            doc, 
+            getDoc,
+            collection,
+            addDoc,
+            serverTimestamp
+        } from 'https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js';
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        // Check if user is logged in
+        onAuthStateChanged(auth, function(user) {
+            if (user) {
+                // User is signed in
+                document.getElementById('logInBtn').style.display = 'none';
+                document.getElementById('signUpBtn').style.display = 'none';
+                document.getElementById('logOutBtn').style.display = 'inline-block';
+                document.getElementById('userRole').style.display = 'inline-block';
+
+                // Get user role from Firestore
+                const userRef = doc(db, "users", user.uid);
+                getDoc(userRef).then((docSnapshot) => {
+                    if (docSnapshot.exists()) {
+                        const role = docSnapshot.data().role;
+                       document.getElementById('userRole').textContent = role.charAt(0).toUpperCase() + role.slice(1);
+                    
+                    }
+                }).catch((error) => {
+                    console.error("Error getting user document:", error);
+                });
+            } else {
+                // User is signed out
+                document.getElementById('logInBtn').style.display = 'inline-block';
+                document.getElementById('signUpBtn').style.display = 'inline-block';
+                document.getElementById('logOutBtn').style.display = 'none';
+                document.getElementById('userRole').style.display = 'none';
+            }
+        });
+
+        // Log out functionality
+        document.getElementById('logOutBtn').addEventListener('click', function() {
+            signOut(auth).then(() => {
+                window.location.href = "menu.html";
+            }).catch((error) => {
+                console.error("Error signing out:", error);
+            });
+        });
+
+        // Hamburger menu functionality
+        const hamburger = document.querySelector(".hamburger");
+        const navLinks = document.querySelector(".nav-links");
+
+        hamburger.addEventListener("click", () => {
+            navLinks.classList.toggle("active");
+        });
+
+        document.addEventListener('click', (e) => {
+            const isHamburger = hamburger.contains(e.target);
+            const isNavLinks = navLinks.contains(e.target);
+            
+            if (!isHamburger && !isNavLinks && navLinks.classList.contains('active')) {
+                navLinks.classList.remove('active');
+            }
+        });
+
+        // Scroll behavior for navbar
+        let prevScrollPos = window.pageYOffset;
+
+        window.onscroll = function() {
+            let currentScrollPos = window.pageYOffset;
+            const nav = document.querySelector('nav');
+
+            if (prevScrollPos > currentScrollPos) {
+                nav.style.top = "0";
+            } else {
+                nav.style.top = "-120px";
+            }
+            
+            prevScrollPos = currentScrollPos;
+        };
+
+        // Form validation and submission
+        document.getElementById("contactForm").addEventListener("submit", async function(event) {
+            event.preventDefault();
+            
+            // Clear previous errors and success message
+            clearErrors();
+            document.getElementById("successMsg").textContent = "";
+            
+            // Get form values
+            const name = document.getElementById("name").value.trim();
+            const email = document.getElementById("email").value.trim();
+            const phone = document.getElementById("phone").value.trim();
+            const message = document.getElementById("message").value.trim();
+            
+            let isValid = true;
+            
+            // Validate name
+            if (name === "") {
+                document.getElementById("nameError").textContent = "Name is required";
+                isValid = false;
+            }
+            
+            // Validate email
+            if (email === "") {
+                document.getElementById("emailError").textContent = "Email is required";
+                isValid = false;
+            } else if (!validateEmail(email)) {
+                document.getElementById("emailError").textContent = "Please enter a valid email address";
+                isValid = false;
+            }
+            
+            // Validate phone
+            if (phone === "") {
+                document.getElementById("phoneError").textContent = "Phone number is required";
+                isValid = false;
+            } else if (!validatePhone(phone)) {
+                document.getElementById("phoneError").textContent = "Please enter a valid phone number (10-12 digits)";
+                isValid = false;
+            }
+            
+            // Validate message
+            if (message === "") {
+                document.getElementById("messageError").textContent = "Message is required";
+                isValid = false;
+            }
+            
+            if (isValid) {
+                // Save to Firebase
+                await saveToFirebase(name, email, phone, message);
+            }
+        });
+
+        function clearErrors() {
+            const errorElements = document.querySelectorAll('.error');
+            errorElements.forEach(element => {
+                element.textContent = "";
+            });
+        }
+
+        function validateEmail(email) {
+            const pattern = /^[^ ]+@[^ ]+\.[a-z]{2,3}$/;
+            return pattern.test(email);
+        }
+
+        function validatePhone(phone) {
+            const pattern = /^[0-9]{10,12}$/;
+            return pattern.test(phone);
+        }
+
+        // Save contact form data to Firebase
+        async function saveToFirebase(name, email, phone, message) {
+            const submitBtn = document.getElementById("submitBtn");
+            const submitText = document.getElementById("submitText");
+            const submitLoading = document.getElementById("submitLoading");
+            const successMsg = document.getElementById("successMsg");
+            
+            // Show loading state
+            submitBtn.disabled = true;
+            submitText.textContent = "Sending...";
+            submitLoading.style.display = "inline-block";
+            
+            try {
+                // Create a new document in the 'contactSubmissions' collection
+                await addDoc(collection(db, "contactSubmissions"), {
+                    name: name,
+                    email: email,
+                    phone: phone,
+                    message: message,
+                    timestamp: serverTimestamp(),
+                    status: "new"
+                });
+                
+                // Show success message
+                successMsg.textContent = "Thank you for your message! We'll get back to you soon.";
+                successMsg.style.color = "#27ae60";
+                
+                // Reset form
+                document.getElementById("contactForm").reset();
+            } catch (error) {
+                console.error("Error adding document: ", error);
+                successMsg.textContent = "There was an error sending your message. Please try again.";
+                successMsg.style.color = "#e74c3c";
+            } finally {
+                // Reset button state
+                submitBtn.disabled = false;
+                submitText.textContent = "Send Message";
+                submitLoading.style.display = "none";
+            }
+        }
+    </script>
+</body>
+</html>
